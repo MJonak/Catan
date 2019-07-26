@@ -1,14 +1,15 @@
 package uk.ac.qub.eeecs.game.catan;
-
+import java.lang.System;
 public class BuildMap {
-    //The build map will be used to store:
+    //The build map will be used to store arrays of:
     // Nodes
     //      - Build state of the node (0 - empty, 1 - settlement, 2 - town)
     //      - Player # (0-3)
-    // Road
+    // Roads
     //      - Build state of the road (0 - no, 1 - yes)
     //      - Player # (0-3)
-// TODO Review using 2 bits to store player #, every node & road would have to default to player 0 - would need extra checks when building
+
+// TODO (FUTURE) Review using 2 bits to store player #, every node & road would have to default to player 0 - would need extra checks when building
     //This will allow to determine where settlements are built, where they can be built,
     // where towns can be built, which player to give resources to after looking up the
     // node from the HexMap node array and determine who has the longest road
@@ -16,11 +17,14 @@ public class BuildMap {
     // the build map is a predefined graph which can take different weights & values for
     // each edge and node, the structure of the graph wont change (for now anyway)
 
-    //TODO Test the Roads[] array to make sure all the roads are there and formatted correctly
-    
+    //Tested as of 26/07/19, creates all of the roads and every StartNode < EndNode
+
+
+    //PROPERTIES
     Node[] nodes = new Node[54];
     Road[] roads = new Road[72];
 
+    //CONSTRUCTOR
     public BuildMap(){
         //Populate array of nodes
         for (short i = 0;i<54;i++){
