@@ -28,6 +28,13 @@ public class Hex {
         this.Nodes[0] = node0;this.Nodes[1] = node1;this.Nodes[2] = node2;this.Nodes[3] = node3;this.Nodes[4] = node4;this.Nodes[5] = node5;
         robber = false;
     }
+    public Hex(byte res, byte dice, byte[] nodes){
+        this.resource = res;
+        this.diceNo = dice;
+        for (int i = 0;i<6;i++){
+            this.Nodes[i] = nodes[i];
+        }
+    }
 
     //METHODS
     public boolean hasRobber(){return robber;};

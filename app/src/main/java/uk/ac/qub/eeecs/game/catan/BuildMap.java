@@ -1,5 +1,4 @@
 package uk.ac.qub.eeecs.game.catan;
-import java.lang.System;
 public class BuildMap {
     //The build map will be used to store arrays of:
     // Nodes

@@ -11,7 +11,10 @@ import uk.ac.qub.eeecs.gage.world.GameScreen;
 
 public class CatanInstructionsScreen extends GameScreen {
 
-    public CatanInstructionsScreen(Game game){super("CatanInstructionsScreen", game);}
+    public CatanInstructionsScreen(Game game){
+        super("CatanInstructionsScreen", game);
+        HexMap hm = new HexMap();
+    }
 
 
     /**
