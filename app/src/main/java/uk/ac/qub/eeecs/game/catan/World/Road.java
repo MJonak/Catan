@@ -1,12 +1,12 @@
-package uk.ac.qub.eeecs.game.catan;
+package uk.ac.qub.eeecs.game.catan.World;
 
 public class Road {
     //Used to represent the edges of the buildMap graph
     //Stores the two nodes the road links, the build state of said road and the associated player number
         //The smaller node will always be the start node.
-    short startNode, endNode, buildState, player;
+    private short startNode, endNode, buildState, player;
 
-    public Road(short A, short B){
+    protected Road(short A, short B){
         if(A<B){
             startNode = A;
             endNode = B;

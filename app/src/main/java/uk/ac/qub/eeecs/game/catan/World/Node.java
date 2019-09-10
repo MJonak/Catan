@@ -1,12 +1,12 @@
-package uk.ac.qub.eeecs.game.catan;
+package uk.ac.qub.eeecs.game.catan.World;
 
 public class Node {
     //Used to represent the vertices of the BuildMap graph
     //Stores the build state of the node and the associated player number
 
-    short buildState, player;
+    private short buildState, player;
 
-    public Node(){
+    protected Node(){
         buildState = 0;
         player = 0;
     }

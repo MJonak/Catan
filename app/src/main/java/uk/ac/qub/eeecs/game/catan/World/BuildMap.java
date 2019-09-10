@@ -1,4 +1,4 @@
-package uk.ac.qub.eeecs.game.catan;
+package uk.ac.qub.eeecs.game.catan.World;
 public class BuildMap {
     //The build map will be used to store arrays of:
     // Nodes

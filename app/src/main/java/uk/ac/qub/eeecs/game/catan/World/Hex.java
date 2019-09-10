@@ -1,6 +1,8 @@
-package uk.ac.qub.eeecs.game.catan;
+package uk.ac.qub.eeecs.game.catan.World;
 
-public class Hex {
+import uk.ac.qub.eeecs.gage.world.GameScreen;
+
+public class Hex extends ClickableObject{
     //The Hex map is made up of an array of 19 hexes
 
     //Each hex is used to store:
@@ -8,6 +10,8 @@ public class Hex {
     // - the associated dice #
     // - whether there is a knight
     // - a 2D array storing the 6 node #s
+    // - hex center X
+    // - hex center Y
 
 
     //The build map stores information about the nodes and edges between them.
@@ -22,13 +26,15 @@ public class Hex {
 
     //CONSTRUCTOR - Uses node0-node5 for the time being as i just want to hardcode the nodes to each hex atm, ill clean this up later
     //TODO clean this up later
-    public Hex(byte res, byte dice, byte node0, byte node1, byte node2, byte node3, byte node4, byte node5){
+    protected Hex(byte res, byte dice, byte node0, byte node1, byte node2, byte node3, byte node4, byte node5, GameScreen gameScreen){
+        super(0, 0, 174f, 200f, null, gameScreen);
         this.resource = res;
         this.diceNo = dice;
         this.Nodes[0] = node0;this.Nodes[1] = node1;this.Nodes[2] = node2;this.Nodes[3] = node3;this.Nodes[4] = node4;this.Nodes[5] = node5;
         robber = false;
     }
-    public Hex(byte res, byte dice, byte[] nodes){
+    protected Hex(byte res, byte dice, byte[] nodes, GameScreen gameScreen){
+        super(0, 0, 174f, 200f, null, gameScreen);
         this.resource = res;
         this.diceNo = dice;
         for (int i = 0;i<6;i++){
@@ -36,17 +42,17 @@ public class Hex {
         }
     }
 
-    //METHODS
-    public boolean hasRobber(){return robber;};
+
+        //METHODS
+    public boolean hasRobber(){return robber;}
 
     public boolean checkDiceNo(byte dice) {
-        if(this.diceNo == dice)
-            return true;
-        else
-            return false;
+        return this.diceNo == dice;
     }
 
     public short getResource(){return this.resource;}
     public short getNode(short x) {return this.Nodes[x];}
 
+    public float getX(){return this.position.x;}
+    public float getY(){return this.position.y;}
 }
