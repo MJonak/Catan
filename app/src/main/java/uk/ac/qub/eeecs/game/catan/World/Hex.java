@@ -7,11 +7,14 @@ public class Hex extends ClickableObject{
 
     //Each hex is used to store:
     // - the resources gained
+            // 0 - desert, 1 is brick, 2 is wool, 3 is ore, 4 is  grain, 5 is wood
     // - the associated dice #
+            //2-12, 7 is special
     // - whether there is a knight
     // - a 2D array storing the 6 node #s
     // - hex center X
     // - hex center Y
+
 
 
     //The build map stores information about the nodes and edges between them.
@@ -50,8 +53,8 @@ public class Hex extends ClickableObject{
         return this.diceNo == dice;
     }
 
-    public short getResource(){return this.resource;}
-    public short getNode(short x) {return this.Nodes[x];}
+    public byte getResource(){return this.resource;}
+    public byte getNode(byte x) {return this.Nodes[x];}
 
     public float getX(){return this.position.x;}
     public float getY(){return this.position.y;}
