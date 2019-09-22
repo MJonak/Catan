@@ -49,10 +49,7 @@ public class Hex extends ClickableObject{
         //METHODS
     public boolean hasRobber(){return robber;}
 
-    public boolean checkDiceNo(byte dice) {
-        return this.diceNo == dice;
-    }
-
+    public byte getDiceNo(){return this.diceNo;}
     public byte getResource(){return this.resource;}
     public byte getNode(byte x) {return this.Nodes[x];}
 

@@ -34,7 +34,8 @@ public class BuildMap {
         }
         String Processed = ",";
         //Ending the loop at 17 as 18&17 dont need to be checked - all nodes will have been processed
-        for (int h = 0; h < 17; h ++) {
+            //TODO even more efficiency is attainable by iterating hexes 0-11 and then 18, leave out the second circle (12-17)
+        for (int h = 0; h < 17; h++) {
             for (byte n = 0; n <6; n++){
                 if (!Processed.contains("," + HM.Hexes[h].getNode(n) + ",")){
                     switch(n) {
@@ -57,7 +58,7 @@ public class BuildMap {
                             nodes[HM.Hexes[h].getNode(n)].setPosition(HM.Hexes[h].getX()-HM.XCos30,HM.Hexes[h].getY()+(HM.X*0.5f));
                             break;
                     }
-                    Processed += + HM.Hexes[h].getNode(n) + ",";
+                    Processed += HM.Hexes[h].getNode(n) + ",";
                 }
             }
         }
@@ -70,23 +71,47 @@ public class BuildMap {
         //The roads are generated as efficiently as possible
         //Create the roads
         //Step 1 - sequentially from 0-53
-        for(short i = 0; i <53; i++){
-            roads[i] = new Road(i, (short)(i+1), gameScreen);
+        for(byte i = 0; i <53; i++){
+            roads[i] = new Road(i, (byte)(i+1), gameScreen);
         }
 
         //Step 2 - roads linking in and out of hexes 12-17 outer edge (check map diagram)
-        short a = 0; // Used to correct the difference between the node numbers as it decreases
-        for (short i = 31;i<45;i+=3){
-            roads[i+22] = new Road((short)(i-29+a), i, gameScreen);
-            roads[i+23] = new Road((short)(i+1), (short)(i+18-a), gameScreen);
-            roads[i+24] = new Road((short)(i-27+a), (short)(i+2), gameScreen);
+        byte a = 0; // Used to correct the difference between the node numbers as it decreases
+        for (byte i = 31;i<45;i+=3){
+            roads[i+22] = new Road((byte)(i-29+a), i, gameScreen);
+            roads[i+23] = new Road((byte)(i+1), (byte)(i+18-a), gameScreen);
+            roads[i+24] = new Road((byte)(i-27+a), (byte)(i+2), gameScreen);
             a+=2;
         }
         //Step 3 - exceptions
-        roads[68] = new Road((short)0, (short)29, gameScreen);
-        roads[69] = new Road((short)30, (short)47, gameScreen);
-        roads[70] = new Road((short)48, (short)53, gameScreen);
-        roads[71] = new Road((short)27, (short)46, gameScreen);
+        roads[68] = new Road((byte)0, (byte)29, gameScreen);
+        roads[69] = new Road((byte)30, (byte)47, gameScreen);
+        roads[70] = new Road((byte)48, (byte)53, gameScreen);
+        roads[71] = new Road((byte)27, (byte)46, gameScreen);
+
+        for (Road r: roads){
+            //Calculate the average coordinates for every road
+            r.setPosition(((nodes[r.getStartNode()].position.x + nodes[r.getEndNode()].position.x)/2) , ((nodes[r.getStartNode()].position.y + nodes[r.getEndNode()].position.y)/2));
+
+            if (nodes[r.getStartNode()].position.x == nodes[r.getEndNode()].position.x){
+                r.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("TempRoad23"));//Use Road23PH
+                r.setHeight(70f);
+                r.setWidth(20f);
+                continue;
+            }
+
+            //Very long condition which just checks that the difference between the start & end nodes x&y
+            if(((nodes[r.getStartNode()].position.x - nodes[r.getEndNode()].position.x) < 0 && (nodes[r.getStartNode()].position.y - nodes[r.getEndNode()].position.y) < 0) || ((nodes[r.getStartNode()].position.x - nodes[r.getEndNode()].position.x) > 0 && (nodes[r.getStartNode()].position.y - nodes[r.getEndNode()].position.y) > 0)) {
+                r.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("TempRoad12")); //Use Road12PH
+                continue;
+            }
+
+            //if we've reached this part of the loop theres only one other option
+            r.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("TempRoad34")); //Use Road34PH
+
+
+        }
+
     }
 
 }

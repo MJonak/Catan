@@ -30,7 +30,7 @@ public class HexMap {
         Hexes[6] = new Hex(resArr[6], diceArr[6], (byte)40, (byte)39, (byte)14, (byte)15, (byte)16, (byte)17, gameScreen);
         Hexes[7] = new Hex(resArr[7], diceArr[7], (byte)42, (byte)41, (byte)40, (byte)17, (byte)18, (byte)19, gameScreen);
         Hexes[8] = new Hex(resArr[8], diceArr[8], (byte)22, (byte)43, (byte)42, (byte)19, (byte)20, (byte)21, gameScreen);
-        Hexes[9] = new Hex(resArr[9], diceArr[9], (byte)24, (byte)45, (byte)44, (byte)43, (byte)42, (byte)19, gameScreen);
+        Hexes[9] = new Hex(resArr[9], diceArr[9], (byte)24, (byte)45, (byte)44, (byte)43, (byte)22, (byte)23, gameScreen);
         Hexes[10] = new Hex(resArr[10], diceArr[10], (byte)26, (byte)27, (byte)46, (byte)45, (byte)24, (byte)25, gameScreen);
         Hexes[11] = new Hex(resArr[11], diceArr[11], (byte)28, (byte)29, (byte)30, (byte)47, (byte)46, (byte)27, gameScreen);
         Hexes[12] = new Hex(resArr[12], diceArr[12], (byte)30, (byte)31, (byte)32, (byte)49, (byte)48, (byte)47, gameScreen);
@@ -45,7 +45,8 @@ public class HexMap {
         //SETTING CENTERPOINTS
 
         //Define Center
-        Hexes[18].setPosition(609f, 600f);
+        //Was (609, 600)
+        Hexes[18].setPosition(750f, 400f);
         //First Row
         Hexes[0].setPosition(Hexes[18].getX()-2*XCos30,Hexes[18].getY()-300f);
         Hexes[1].setPosition(Hexes[0].getX()+2*XCos30, Hexes[0].getY());
