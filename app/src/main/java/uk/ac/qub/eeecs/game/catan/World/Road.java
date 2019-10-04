@@ -28,11 +28,36 @@ public class Road extends ClickableObject{
         player = playerNo;
     }
 
+    /**
+     * Returns the current build state of this node
+     * @return 0 - empty ; 1 - settlement ; 2 - town
+     */
     public byte getBuildState(){return this.buildState;}
+
+    /**
+     * Returns the player number associated with this node
+     * @return Corresponding player number if something has been built, 0 otherwise
+     */
     public byte getPlayer(){return this.player;}
+
+    /**
+     * Returns the start node
+     * @return the start node
+     */
     public byte getStartNode(){return this.startNode;}
+
+    /**
+     * Returns the end node
+     * @return the end node
+     */
     public byte getEndNode(){return this.endNode;}
 
+    /**
+     * Compares the provided nodes to the start and end node of this road
+     * @param A a node
+     * @param B another Node
+     * @return true if the nodes are linked by this road, false otherwise
+     */
     public boolean checkNodes(byte A, byte B) {
         return (this.startNode == A && this.endNode == B) || (this.startNode == B && this.endNode == A);
     }

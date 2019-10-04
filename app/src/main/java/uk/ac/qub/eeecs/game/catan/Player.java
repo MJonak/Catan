@@ -12,10 +12,35 @@ public class Player {
         victoryPoints = 0;
     }
 
+    /**
+     * Adds the quantity of the corresponding resource to the players inventory.
+     * @param resourceNo Resource number stored in relevant hex
+     * @param quantity Quantity given, based off of number of settlements/cities on relevant hexes
+     */
     public void addResource(byte resourceNo, byte quantity){this.resources[resourceNo] += quantity;}
+
+    /**
+     * Add victory points to the players running total. Call this method when the player should be awarded victory points
+     * @param quantity Number of victory points to be awarded
+     */
     public void addVictoryPoints(byte quantity){this.victoryPoints += quantity;}
+
+    /**
+     * Return player number
+     * @return This player's player number
+     */
     public byte getPlayerNo(){return this.playerNo;}
+
+    /**
+     * Returns the player's current victory point total
+     * @return This player's victory point total
+     */
     public byte getVictoryPoints(){return this.victoryPoints;}
+
+    /**
+     * Counts the player's total number of resource cards. If a 7 is rolled and this player's resource card total exceeds 7 they must discard half of their cards (rounded down).
+     * @return This player's total number of resources
+     */
     public byte getNoOfResources(){
         byte sum = 0;
         for (int i = 0; i<resources.length; i++){

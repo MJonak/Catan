@@ -8,7 +8,7 @@ public class HexMap {
     //The HexMap class is used to store the 19 hexes that make up the actual map alongside all related methods
 
     //The predefined list of resources will be based off of the beginner set-up in the settlers of catan rule book
-        // 5, 2, 4, 2, 4, 3, 5, 4, 3, 1, 0, 1; 3, 1, 5, 2, 2, 5, 4
+        // 4, 1, 3, 1, 3, 2, 4, 3, 2, 0, 5, 0; 2, 0, 4, 1, 1, 4, 3
     // and the list of dice rolls
         //11, 12, 9, 10, 8, 3, 6, 2, 5, 8, {0} , 4, 6, 5, 4, 9, 10, 3, 11
     final short NoOfHexes = 19;
@@ -17,7 +17,7 @@ public class HexMap {
     public Hex[] Hexes = new Hex[NoOfHexes];
 
     public HexMap(GameScreen gameScreen){
-        byte[] resArr = new byte[]{5, 2, 4, 2, 4, 3, 5, 4, 3, 1, 0, 1, 3, 1, 5, 2, 2, 5, 4};
+        byte[] resArr = new byte[]{4, 1, 3, 1, 3, 2, 4, 3, 2, 0, 5, 0, 2, 0, 4, 1, 1, 4, 3};
         byte[] diceArr = new byte[]{11, 12, 9, 10, 8, 3, 6, 2, 5, 8, 0, 4, 6, 5, 4, 9, 10, 3, 11};
         //Tried generating the numbers, however they need to be stored in the correct node field in the Hex object making it far far harder.
 

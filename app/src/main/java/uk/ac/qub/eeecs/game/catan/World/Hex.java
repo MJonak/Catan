@@ -7,7 +7,7 @@ public class Hex extends ClickableObject{
 
     //Each hex is used to store:
     // - the resources gained
-            // 0 - desert, 1 is brick, 2 is wool, 3 is ore, 4 is  grain, 5 is wood
+            // 0 is brick, 1 is wool, 2 is ore, 3 is  grain, 4 is wood, 5 is desert
     // - the associated dice #
             //2-12, 7 is special
     // - whether there is a knight
@@ -47,12 +47,41 @@ public class Hex extends ClickableObject{
 
 
         //METHODS
+
+    /**
+     * Checks if this hex is currently occupied by the robber.
+     * @return True if the robber is on this hex, False otherwise
+     */
     public boolean hasRobber(){return robber;}
 
+    /**
+     * Returns the dice number corresponding to this hex
+     * @return The dice number
+     */
     public byte getDiceNo(){return this.diceNo;}
+
+    /**
+     * Returns the resource corresponding to this hex
+     * @return The resource number
+     */
     public byte getResource(){return this.resource;}
+
+    /**
+     * Returns the node index corresponding to the selected node of this hex.
+     * @param x Node index within this hex: 0 - Top left ; 1 - Top center ; 2 - Top right ; 3 - Bottom right ; 4 - Bottom center ; 5 - Bottom Left
+     * @return Node index within BuildMap Nodes[] array
+     */
     public byte getNode(byte x) {return this.Nodes[x];}
 
+    /**
+     * Returns the X coordinate of this hex
+     * @return X coordinate in relation to game layer
+     */
     public float getX(){return this.position.x;}
+
+    /**
+     * Returns the Y coordinate of this hex
+     * @return Y coordinate in relation to game layer
+     */
     public float getY(){return this.position.y;}
 }

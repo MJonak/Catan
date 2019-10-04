@@ -23,6 +23,7 @@ public class BuildMap {
 // TODO (FUTURE) Review using 2 bits to store player #, every node & road would have to default to player 0 - would need extra checks when building
 
     //PROPERTIES
+
     public Node[] nodes = new Node[54];
     public Road[] roads = new Road[72];
 
@@ -106,7 +107,7 @@ public class BuildMap {
                 continue;
             }
 
-            //if we've reached this part of the loop theres only one other option
+            //if we've reached this part of the loop there's only one other option
             r.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("TempRoad34")); //Use Road34PH
 
 
