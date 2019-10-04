@@ -13,11 +13,28 @@ public class Player {
     }
 
     /**
-     * Adds the quantity of the corresponding resource to the players inventory.
+     * Adds the specified quantity of the corresponding resource to the players inventory.
      * @param resourceNo Resource number stored in relevant hex
      * @param quantity Quantity given, based off of number of settlements/cities on relevant hexes
      */
     public void addResource(byte resourceNo, byte quantity){this.resources[resourceNo] += quantity;}
+
+    /**
+     * Removes the specified quantity of the corresponding resource from the players inventory
+     * @param resourceNo Corresponding Resource number: 0 is brick, 1 is wool, 2 is ore, 3 is  grain, 4 is wood
+     * @param quantity Quantity removed
+     */
+    public void removeResource(byte resourceNo, byte quantity){this.resources[resourceNo] -= quantity;}
+
+    /**
+     * Checks if the player's quantity of the specified resource exceeds or is equal to the quantity specified
+     * @param resourceNo Resource number to check
+     * @param quantity Required quantity
+     * @return
+     */
+    public boolean hasEnoughResource(byte resourceNo, byte quantity){
+        return this.resources[resourceNo] >= quantity;
+    }
 
     /**
      * Add victory points to the players running total. Call this method when the player should be awarded victory points
