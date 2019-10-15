@@ -7,18 +7,43 @@ import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
+import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
+import uk.ac.qub.eeecs.gage.util.BoundingBox;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
+import uk.ac.qub.eeecs.gage.world.LayerViewport;
+import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.game.catan.World.BuildMap;
 import uk.ac.qub.eeecs.game.catan.World.ClickableObject;
 import uk.ac.qub.eeecs.game.catan.World.Hex;
 import uk.ac.qub.eeecs.game.catan.World.HexMap;
+import uk.ac.qub.eeecs.game.catan.World.Node;
+import uk.ac.qub.eeecs.game.catan.World.Road;
 
 public class CatanGameScreen extends GameScreen {
+
+    //Game properties
     private HexMap HM;
     private BuildMap BM;
-    public CatanGameScreen(Game game) {
+    private byte NoOfPlayers = 2;
+    private static byte buildMode, currentPlayer; //buildMode 0 - nothing; 1 - settlement ; 2 - road ; 3 - town
+    private boolean setup;
+    private Player[] PlayerList = new Player[NoOfPlayers];
 
+
+    //Viewport Properties
+    private final static float WORLD_WIDTH = 1210.0f;
+    private final static float WORLD_HEIGHT = 1200.0f;
+    private LayerViewport mGameLayerViewport;
+    private ScreenViewport mGameScreenViewport;
+    //TODO The focused viewport width is the width of the game layer viewport, how much of the map can be seen at once, will need to change this to allow zoom
+    private final static float FOCUSED_VIEWPORT_WIDTH = 1500.0f;
+
+
+    // ----------------
+    public CatanGameScreen(Game game) {
         super("CatanGameScreen", game);
+
+        //Game constructor
         mGame.getAssetManager().loadAndAddBitmap("TempHex", "img/catan/HexPH.png");
         mGame.getAssetManager().loadAndAddBitmap("TempNode", "img/catan/SettlementPH.png");
         mGame.getAssetManager().loadAndAddBitmap("TempRoad12", "img/catan/Road12PH.png");
@@ -26,13 +51,31 @@ public class CatanGameScreen extends GameScreen {
         mGame.getAssetManager().loadAndAddBitmap("TempRoad34", "img/catan/Road34PH.png");
         HM = new HexMap(this);
         BM = new BuildMap(HM,this);
+        setup = true;
+        currentPlayer = 0;
+        buildMode = 1;
+        for (byte i = 0; i<NoOfPlayers;i++){
+            PlayerList[i] = new Player(i);
+        }
 
 
+        //Viewport constructor
+        float screenWidth = mGame.getScreenWidth();
+        float screenHeight = mGame.getScreenHeight();
 
+        float aspectRatio = screenHeight / screenWidth;
+        //Game layer viewport defined to be centered with the center of the map
+        mGameLayerViewport = new LayerViewport(
+                WORLD_WIDTH / 2.0f, WORLD_HEIGHT / 2.0f,
+                FOCUSED_VIEWPORT_WIDTH / 2.0f,
+                aspectRatio * FOCUSED_VIEWPORT_WIDTH / 2.0f);
+
+        //Game screen viewport defined to take up all the drawable space
+        mGameScreenViewport = new ScreenViewport(0, 0, (int) screenWidth, (int) screenHeight);
 
     }
 
-
+    public static byte getCurrentPlayer(){return currentPlayer;}
     /**
      * Update the card demo screen
      *
@@ -42,6 +85,20 @@ public class CatanGameScreen extends GameScreen {
     public void update(ElapsedTime elapsedTime) {
         // Process any touch events occurring since the last update
         Input input = mGame.getInput();
+        switch(buildMode){
+            case 1: //Settlement
+                for (Node node: BM.nodes) {
+                    node.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+                }
+                break;
+            case 2: //Road
+                for (Road road: BM.roads){
+                    road.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+                }
+                break;
+            case 3: //Town
+                break;
+        }
     }
 
     Paint paint = new Paint();
@@ -57,17 +114,17 @@ public class CatanGameScreen extends GameScreen {
         graphics2D.clear(Color.BLUE);
         for (Hex object: HM.Hexes
         ) {
-            object.draw(elapsedTime, graphics2D);
-            graphics2D.drawText(object.getDiceNo() + " " + object.getResource(),object.getX()-20f, object.getY(), paint);
-            //Temporary resource and die display ^^
+            object.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
         }
-        for (ClickableObject object: BM.roads
+        for (Road object: BM.roads
         ){
-            object.draw(elapsedTime, graphics2D);
+            if (object.getBuildState()!=0)
+            object.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
         }
-        for (ClickableObject object: BM.nodes
+        for (Node object: BM.nodes
         ) {
-            object.draw(elapsedTime, graphics2D);
+            if (object.getBuildState()!=0)
+            object.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
         }
     }
 }

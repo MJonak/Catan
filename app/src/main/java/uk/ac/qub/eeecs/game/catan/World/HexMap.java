@@ -46,7 +46,7 @@ public class HexMap {
 
         //Define Center
         //Was (609, 600)
-        Hexes[18].setPosition(750f, 400f);
+        Hexes[18].setPosition(609f, 600f);
         //First Row
         Hexes[0].setPosition(Hexes[18].getX()-2*XCos30,Hexes[18].getY()-300f);
         Hexes[1].setPosition(Hexes[0].getX()+2*XCos30, Hexes[0].getY());

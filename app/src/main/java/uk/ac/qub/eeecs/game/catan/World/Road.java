@@ -1,6 +1,9 @@
 package uk.ac.qub.eeecs.game.catan.World;
 
+import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
+import uk.ac.qub.eeecs.gage.util.Vector2;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
+import uk.ac.qub.eeecs.game.catan.CatanGameScreen;
 
 public class Road extends ClickableObject{
     //Used to represent the edges of the buildMap graph
@@ -60,6 +63,15 @@ public class Road extends ClickableObject{
      */
     public boolean checkNodes(byte A, byte B) {
         return (this.startNode == A && this.endNode == B) || (this.startNode == B && this.endNode == A);
+    }
+
+    @Override
+    void updateTriggerActions(TouchEvent touchEvent, Vector2 touchLocation) {
+        if(this.buildState == 0){
+            this.buildState = 1;
+            this.player = CatanGameScreen.getCurrentPlayer();
+            //TODO update bitmap
+        }
     }
 
 

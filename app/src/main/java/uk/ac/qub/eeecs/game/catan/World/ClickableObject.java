@@ -17,16 +17,16 @@ import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 
 public class ClickableObject extends GameObject {
 
-    private boolean mIsTouched;
+    public boolean mIsTouched;
 
-    private Vector2 mTouchLocation = new Vector2();
+    public Vector2 mTouchLocation = new Vector2();
 
     protected ClickableObject(float x, float y, float width, float height,
                            Bitmap bitmap, GameScreen gameScreen){
         super(x, y, width, height, bitmap, gameScreen);
     }
 
-    private void getTouchLocation(Vector2 touchLocation, float x, float y,
+    public void getTouchLocation(Vector2 touchLocation, float x, float y,
                                   LayerViewport layerViewport,
                                   ScreenViewport screenViewport) {
             // Convert and store the touch location
@@ -34,11 +34,12 @@ public class ClickableObject extends GameObject {
                     x, y, layerViewport, touchLocation);
     }
 
-    private void updateTriggerActions(TouchEvent touchEvent, Vector2 touchLocation){
+    void updateTriggerActions(TouchEvent touchEvent, Vector2 touchLocation){
         mIsTouched = true;
+
     }
 
-    private boolean isTouched(){
+    public boolean isTouched(){
 
         if (mIsTouched){
             mIsTouched = false;

@@ -1,6 +1,9 @@
 package uk.ac.qub.eeecs.game.catan.World;
 
+import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
+import uk.ac.qub.eeecs.gage.util.Vector2;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
+import uk.ac.qub.eeecs.game.catan.CatanGameScreen;
 
 public class Node extends ClickableObject{
     //Used to represent the vertices of the BuildMap graph
@@ -43,6 +46,17 @@ public class Node extends ClickableObject{
         buildState = 2;
     }
 
+    @Override
+    void updateTriggerActions(TouchEvent touchEvent, Vector2 touchLocation){
+        if (this.buildState == 0){
+            //build the settlement
+            this.buildState = 1;
+            this.player = CatanGameScreen.getCurrentPlayer();
+            //TODO update bitmap
+        }
+        //TODO add building towns
+
+    }
 
 
 

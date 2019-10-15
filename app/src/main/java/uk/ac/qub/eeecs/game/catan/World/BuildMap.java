@@ -101,14 +101,14 @@ public class BuildMap {
                 continue;
             }
 
-            //Very long condition which just checks that the difference between the start & end nodes x&y
+            //Very long condition which just checks the difference between the start & end nodes x&y
             if(((nodes[r.getStartNode()].position.x - nodes[r.getEndNode()].position.x) < 0 && (nodes[r.getStartNode()].position.y - nodes[r.getEndNode()].position.y) < 0) || ((nodes[r.getStartNode()].position.x - nodes[r.getEndNode()].position.x) > 0 && (nodes[r.getStartNode()].position.y - nodes[r.getEndNode()].position.y) > 0)) {
-                r.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("TempRoad12")); //Use Road12PH
+                r.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("TempRoad34")); //Use Road34PH
                 continue;
             }
 
             //if we've reached this part of the loop there's only one other option
-            r.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("TempRoad34")); //Use Road34PH
+            r.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("TempRoad12")); //Use Road12PH
 
 
         }
