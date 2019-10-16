@@ -49,6 +49,11 @@ public class CatanGameScreen extends GameScreen {
         mGame.getAssetManager().loadAndAddBitmap("TempRoad12", "img/catan/Road12PH.png");
         mGame.getAssetManager().loadAndAddBitmap("TempRoad23", "img/catan/Road23PH.png");
         mGame.getAssetManager().loadAndAddBitmap("TempRoad34", "img/catan/Road34PH.png");
+        mGame.getAssetManager().loadAndAddBitmap("HexWood", "img/catan/HexPHWood.png");
+        mGame.getAssetManager().loadAndAddBitmap("HexBrick", "img/catan/HexPHBrick.png");
+        mGame.getAssetManager().loadAndAddBitmap("HexOre", "img/catan/HexPHOre.png");
+        mGame.getAssetManager().loadAndAddBitmap("HexWheat", "img/catan/HexPHWheat.png");
+        mGame.getAssetManager().loadAndAddBitmap("HexSheep", "img/catan/HexPHSheep.png");
         HM = new HexMap(this);
         BM = new BuildMap(HM,this);
         setup = true;

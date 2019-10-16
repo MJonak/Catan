@@ -39,7 +39,7 @@ public class HexMap {
         Hexes[13] = new Hex(resArr[13], diceArr[13], (byte)32, (byte)33, (byte)34, (byte)35, (byte)50, (byte)49, gameScreen);
         Hexes[14] = new Hex(resArr[14], diceArr[14], (byte)50, (byte)35, (byte)36, (byte)37, (byte)38, (byte)51, gameScreen);
         Hexes[15] = new Hex(resArr[15], diceArr[15], (byte)52, (byte)51, (byte)38, (byte)39, (byte)40, (byte)41, gameScreen);
-        Hexes[16] = new Hex(resArr[16], diceArr[16], (byte)49, (byte)53, (byte)52, (byte)41, (byte)42, (byte)43, gameScreen);
+        Hexes[16] = new Hex(resArr[16], diceArr[16], (byte)44, (byte)53, (byte)52, (byte)41, (byte)42, (byte)43, gameScreen);
         Hexes[17] = new Hex(resArr[17], diceArr[17], (byte)46, (byte)47, (byte)48, (byte)53, (byte)44, (byte)45, gameScreen);
         Hexes[18] = new Hex(resArr[18], diceArr[18], (byte)48, (byte)49, (byte)50, (byte)51, (byte)52, (byte)53, gameScreen);
 
@@ -72,11 +72,31 @@ public class HexMap {
         Hexes[8].setPosition(Hexes[0].getX(), Hexes[9].getY()-150f);
         Hexes[7].setPosition(Hexes[8].getX()+2*XCos30, Hexes[8].getY());
         Hexes[6].setPosition(Hexes[8].getX()+4*XCos30, Hexes[8].getY());
-        
-        //SETTING BITMAPS - Just setting all bitmaps to the placeholder
-        //TODO change this to a switch statement and set the appropriate bitmap for each hex depending on the resource value
+
+
+        //SETTING BITMAPS
         for (Hex h: Hexes) {
-            h.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("TempHex"));
+            switch (h.getResource()){
+                case 0:
+                    h.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("HexBrick"));
+                    break;
+                case 1:
+                    h.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("HexSheep"));
+                    break;
+                case 2:
+                    h.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("HexOre"));
+                    break;
+                case 3:
+                    h.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("HexWheat"));
+                    break;
+                case 4:
+                    h.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("HexWood"));
+                    break;
+                case 5:
+                    h.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("TempHex"));
+                    break;
+            }
+
         }
 
         //TESTING  V V V V V V V V V V V
