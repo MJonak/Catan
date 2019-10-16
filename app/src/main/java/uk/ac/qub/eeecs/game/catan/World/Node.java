@@ -53,6 +53,7 @@ public class Node extends ClickableObject{
             this.buildState = 1;
             this.player = CatanGameScreen.getCurrentPlayer();
             //TODO update bitmap
+            this.setBitmap(mGameScreen.getGame().getAssetManager().getBitmap("Node" + player));
         }
         //TODO add building towns
 

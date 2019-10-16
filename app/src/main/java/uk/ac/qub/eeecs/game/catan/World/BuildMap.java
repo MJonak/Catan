@@ -67,7 +67,7 @@ public class BuildMap {
 
         //Set Node bitmap
         for (Node n: nodes) {
-            n.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("TempNode"));
+            n.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("Node0"));
         }
 
         //The roads are generated as efficiently as possible
@@ -96,7 +96,7 @@ public class BuildMap {
             r.setPosition(((nodes[r.getStartNode()].position.x + nodes[r.getEndNode()].position.x)/2) , ((nodes[r.getStartNode()].position.y + nodes[r.getEndNode()].position.y)/2));
 
             if (nodes[r.getStartNode()].position.x == nodes[r.getEndNode()].position.x){
-                r.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("TempRoad23"));//Use Road23PH
+                r.setRoadType((byte)23); //Use Road23
                 r.setHeight(100f);
                 r.setWidth(20f);
                 continue;
@@ -104,12 +104,12 @@ public class BuildMap {
 
             //Very long condition which just checks the difference between the start & end nodes x&y
             if(((nodes[r.getStartNode()].position.x - nodes[r.getEndNode()].position.x) < 0 && (nodes[r.getStartNode()].position.y - nodes[r.getEndNode()].position.y) < 0) || ((nodes[r.getStartNode()].position.x - nodes[r.getEndNode()].position.x) > 0 && (nodes[r.getStartNode()].position.y - nodes[r.getEndNode()].position.y) > 0)) {
-                r.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("TempRoad34")); //Use Road34PH
+                r.setRoadType((byte)34); //Use Road34
                 continue;
             }
 
             //if we've reached this part of the loop there's only one other option
-            r.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("TempRoad12")); //Use Road12PH
+            r.setRoadType((byte)12); //Use Road12
 
 
         }

@@ -45,15 +45,27 @@ public class CatanGameScreen extends GameScreen {
 
         //Game constructor
         mGame.getAssetManager().loadAndAddBitmap("TempHex", "img/catan/HexPH.png");
-        mGame.getAssetManager().loadAndAddBitmap("TempNode", "img/catan/SettlementPH.png");
-        mGame.getAssetManager().loadAndAddBitmap("TempRoad12", "img/catan/Road12PH.png");
-        mGame.getAssetManager().loadAndAddBitmap("TempRoad23", "img/catan/Road23PH.png");
-        mGame.getAssetManager().loadAndAddBitmap("TempRoad34", "img/catan/Road34PH.png");
         mGame.getAssetManager().loadAndAddBitmap("HexWood", "img/catan/HexPHWood.png");
         mGame.getAssetManager().loadAndAddBitmap("HexBrick", "img/catan/HexPHBrick.png");
         mGame.getAssetManager().loadAndAddBitmap("HexOre", "img/catan/HexPHOre.png");
         mGame.getAssetManager().loadAndAddBitmap("HexWheat", "img/catan/HexPHWheat.png");
         mGame.getAssetManager().loadAndAddBitmap("HexSheep", "img/catan/HexPHSheep.png");
+        mGame.getAssetManager().loadAndAddBitmap("Node0", "img/catan/SettlementPH.png");
+        mGame.getAssetManager().loadAndAddBitmap("Node1", "img/catan/SettlementPH1.png");
+        mGame.getAssetManager().loadAndAddBitmap("Node2", "img/catan/SettlementPH2.png");
+        mGame.getAssetManager().loadAndAddBitmap("Node3", "img/catan/SettlementPH3.png");
+        mGame.getAssetManager().loadAndAddBitmap("Road12-0", "img/catan/Road12PH.png");
+        mGame.getAssetManager().loadAndAddBitmap("Road12-1", "img/catan/Road12PH1.png");
+        mGame.getAssetManager().loadAndAddBitmap("Road12-2", "img/catan/Road12PH2.png");
+        mGame.getAssetManager().loadAndAddBitmap("Road12-3", "img/catan/Road12PH3.png");
+        mGame.getAssetManager().loadAndAddBitmap("Road23-0", "img/catan/Road23PH.png");
+        mGame.getAssetManager().loadAndAddBitmap("Road23-1", "img/catan/Road23PH1.png");
+        mGame.getAssetManager().loadAndAddBitmap("Road23-2", "img/catan/Road23PH2.png");
+        mGame.getAssetManager().loadAndAddBitmap("Road23-3", "img/catan/Road23PH3.png");
+        mGame.getAssetManager().loadAndAddBitmap("Road34-0", "img/catan/Road34PH.png");
+        mGame.getAssetManager().loadAndAddBitmap("Road34-1", "img/catan/Road34PH1.png");
+        mGame.getAssetManager().loadAndAddBitmap("Road34-2", "img/catan/Road34PH2.png");
+        mGame.getAssetManager().loadAndAddBitmap("Road34-3", "img/catan/Road34PH3.png");
         HM = new HexMap(this);
         BM = new BuildMap(HM,this);
         setup = true;

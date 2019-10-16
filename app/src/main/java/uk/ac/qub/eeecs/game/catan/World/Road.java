@@ -9,7 +9,7 @@ public class Road extends ClickableObject{
     //Used to represent the edges of the buildMap graph
     //Stores the two nodes the road links, the build state of said road and the associated player number
         //The smaller node will always be the start node.
-    private byte startNode, endNode, buildState, player;
+    private byte startNode, endNode, buildState, player, roadType;
 
     //TODO The default height & width of the road will only work for 2/3 of the roads, need to change it to 40*100 for vertical roads - also redo the bitmap for vertical roads
     Road(byte A, byte B, GameScreen gameScreen){
@@ -65,12 +65,19 @@ public class Road extends ClickableObject{
         return (this.startNode == A && this.endNode == B) || (this.startNode == B && this.endNode == A);
     }
 
+    /**
+     * Sets the road type - part of the suffix which determines which bitmap to use when the road is built
+     * @param xy 12 for a downward sloping road; 23 for a vertical road; 34 for an upward sloping road
+     */
+    public void setRoadType(byte xy){ this.roadType = xy;}
+
+
     @Override
     void updateTriggerActions(TouchEvent touchEvent, Vector2 touchLocation) {
         if(this.buildState == 0){
             this.buildState = 1;
             this.player = CatanGameScreen.getCurrentPlayer();
-            //TODO update bitmap
+            this.setBitmap(mGameScreen.getGame().getAssetManager().getBitmap("Road" + roadType + "-" + player));
         }
     }
 
