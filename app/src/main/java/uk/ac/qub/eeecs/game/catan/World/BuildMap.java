@@ -36,31 +36,32 @@ public class BuildMap {
         String Processed = ",";
         //Ending the loop at 17 as 18&17 dont need to be checked - all nodes will have been processed
             //TODO even more efficiency is attainable by iterating hexes 0-11 and then 18, leave out the second circle (12-17)
-        for (int h = 0; h < 17; h++) {
+        for (int h = 0; h < 19; h++) {
             for (byte n = 0; n <6; n++){
                 if (!Processed.contains("," + HM.Hexes[h].getNode(n) + ",")){
                     switch(n) {
                         case 0:
-                            nodes[HM.Hexes[h].getNode(n)].setPosition(HM.Hexes[h].getX()-HM.XCos30,HM.Hexes[h].getY()-(HM.X*0.5f));
+                            nodes[HM.Hexes[h].getNode(n)].setPosition(HM.Hexes[h].getX()-HM.XCos30,HM.Hexes[h].getY()+(HM.X*0.5f));
                             break;
                         case 1:
-                            nodes[HM.Hexes[h].getNode(n)].setPosition(HM.Hexes[h].getX(),HM.Hexes[h].getY()-HM.X);
-                            break;
-                        case 2:
-                            nodes[HM.Hexes[h].getNode(n)].setPosition(HM.Hexes[h].getX()+HM.XCos30,HM.Hexes[h].getY()-(HM.X*0.5f));
-                            break;
-                        case 3:
-                            nodes[HM.Hexes[h].getNode(n)].setPosition(HM.Hexes[h].getX()+HM.XCos30,HM.Hexes[h].getY()+(HM.X*0.5f));
-                            break;
-                        case 4:
                             nodes[HM.Hexes[h].getNode(n)].setPosition(HM.Hexes[h].getX(),HM.Hexes[h].getY()+HM.X);
                             break;
+                        case 2:
+                            nodes[HM.Hexes[h].getNode(n)].setPosition(HM.Hexes[h].getX()+HM.XCos30,HM.Hexes[h].getY()+(HM.X*0.5f));
+                            break;
+                        case 3:
+                            nodes[HM.Hexes[h].getNode(n)].setPosition(HM.Hexes[h].getX()+HM.XCos30,HM.Hexes[h].getY()-(HM.X*0.5f));
+                            break;
+                        case 4:
+                            nodes[HM.Hexes[h].getNode(n)].setPosition(HM.Hexes[h].getX(),HM.Hexes[h].getY()-HM.X);
+                            break;
                         case 5:
-                            nodes[HM.Hexes[h].getNode(n)].setPosition(HM.Hexes[h].getX()-HM.XCos30,HM.Hexes[h].getY()+(HM.X*0.5f));
+                            nodes[HM.Hexes[h].getNode(n)].setPosition(HM.Hexes[h].getX()-HM.XCos30,HM.Hexes[h].getY()-(HM.X*0.5f));
                             break;
                     }
                     Processed += HM.Hexes[h].getNode(n) + ",";
                 }
+                if(h==11) h=17;
             }
         }
 
@@ -96,7 +97,7 @@ public class BuildMap {
 
             if (nodes[r.getStartNode()].position.x == nodes[r.getEndNode()].position.x){
                 r.setBitmap(gameScreen.getGame().getAssetManager().getBitmap("TempRoad23"));//Use Road23PH
-                r.setHeight(70f);
+                r.setHeight(100f);
                 r.setWidth(20f);
                 continue;
             }

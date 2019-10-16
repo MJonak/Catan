@@ -7,6 +7,8 @@ public class HexMap {
 
     //The HexMap class is used to store the 19 hexes that make up the actual map alongside all related methods
 
+    // 0 is brick, 1 is sheep, 2 is ore, 3 is wheat, 4 is wood, 5 is desert
+
     //The predefined list of resources will be based off of the beginner set-up in the settlers of catan rule book
         // 4, 1, 3, 1, 3, 2, 4, 3, 2, 0, 5, 0; 2, 0, 4, 1, 1, 4, 3
     // and the list of dice rolls
@@ -48,11 +50,11 @@ public class HexMap {
         //Was (609, 600)
         Hexes[18].setPosition(609f, 600f);
         //First Row
-        Hexes[0].setPosition(Hexes[18].getX()-2*XCos30,Hexes[18].getY()-300f);
+        Hexes[0].setPosition(Hexes[18].getX()-2*XCos30,Hexes[18].getY()+300f);
         Hexes[1].setPosition(Hexes[0].getX()+2*XCos30, Hexes[0].getY());
         Hexes[2].setPosition(Hexes[0].getX()+4*XCos30, Hexes[0].getY());
         //Second Row
-        Hexes[11].setPosition(Hexes[0].getX()-XCos30, Hexes[0].getY()+150f);
+        Hexes[11].setPosition(Hexes[0].getX()-XCos30, Hexes[0].getY()-150f);
         Hexes[12].setPosition(Hexes[11].getX()+2*XCos30, Hexes[11].getY());
         Hexes[13].setPosition(Hexes[11].getX()+4*XCos30, Hexes[11].getY());
         Hexes[3].setPosition(Hexes[11].getX()+6*XCos30, Hexes[11].getY());
@@ -62,12 +64,12 @@ public class HexMap {
         Hexes[14].setPosition(Hexes[18].getX()+2*XCos30, Hexes[18].getY());
         Hexes[4].setPosition(Hexes[18].getX()+4*XCos30, Hexes[18].getY());
         //Fourth Row
-        Hexes[9].setPosition(Hexes[11].getX(), Hexes[18].getY()+150f);
+        Hexes[9].setPosition(Hexes[11].getX(), Hexes[18].getY()-150f);
         Hexes[16].setPosition(Hexes[9].getX()+2*XCos30, Hexes[9].getY());
         Hexes[15].setPosition(Hexes[9].getX()+4*XCos30, Hexes[9].getY());
         Hexes[5].setPosition(Hexes[9].getX()+6*XCos30, Hexes[9].getY());
         //Fifth Row
-        Hexes[8].setPosition(Hexes[0].getX(), Hexes[9].getY()+150f);
+        Hexes[8].setPosition(Hexes[0].getX(), Hexes[9].getY()-150f);
         Hexes[7].setPosition(Hexes[8].getX()+2*XCos30, Hexes[8].getY());
         Hexes[6].setPosition(Hexes[8].getX()+4*XCos30, Hexes[8].getY());
         
