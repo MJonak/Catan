@@ -8,7 +8,9 @@ import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
+import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.util.BoundingBox;
+import uk.ac.qub.eeecs.gage.util.Vector2;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
@@ -26,9 +28,9 @@ public class CatanGameScreen extends GameScreen {
     private BuildMap BM;
     private byte NoOfPlayers = 2;
     private static byte buildMode, currentPlayer; //buildMode 0 - nothing; 1 - settlement ; 2 - road ; 3 - town
-    private boolean setup;
+    private boolean setup, diceRolledThisTurn;
     private Player[] PlayerList = new Player[NoOfPlayers];
-
+    private PushButton btnBuild, btnRoll, btnEndTurn;
 
     //Viewport Properties
     private final static float WORLD_WIDTH = 1210.0f;
@@ -66,15 +68,25 @@ public class CatanGameScreen extends GameScreen {
         mGame.getAssetManager().loadAndAddBitmap("Road34-1", "img/catan/Road34PH1.png");
         mGame.getAssetManager().loadAndAddBitmap("Road34-2", "img/catan/Road34PH2.png");
         mGame.getAssetManager().loadAndAddBitmap("Road34-3", "img/catan/Road34PH3.png");
+        mGame.getAssetManager().loadAndAddBitmap("btnBuild", "img/catan/btnBuild.png");
+        mGame.getAssetManager().loadAndAddBitmap("btnRoll", "img/catan/btnRollDice.png");
+        mGame.getAssetManager().loadAndAddBitmap("btnEndTurn", "img/catan/btnEndTurn.png");
         HM = new HexMap(this);
         BM = new BuildMap(HM,this);
         setup = true;
         currentPlayer = 0;
+        diceRolledThisTurn = false;
         buildMode = 1;
         for (byte i = 0; i<NoOfPlayers;i++){
             PlayerList[i] = new Player(i);
         }
 
+        currentPlayer = 0;
+        TouchEvent te = new TouchEvent(); Vector2 v2 = new Vector2();
+        BM.nodes[7].updateTriggerActions(te, v2); BM.roads[56].updateTriggerActions(te, v2); BM.nodes[36].updateTriggerActions(te, v2);BM.roads[36].updateTriggerActions(te, v2);
+        currentPlayer = 1;
+        BM.nodes[30].updateTriggerActions(te, v2); BM.roads[30].updateTriggerActions(te, v2); BM.nodes[39].updateTriggerActions(te, v2); BM.roads[39].updateTriggerActions(te, v2);
+        currentPlayer = 0;
 
         //Viewport constructor
         float screenWidth = mGame.getScreenWidth();
@@ -90,6 +102,11 @@ public class CatanGameScreen extends GameScreen {
         //Game screen viewport defined to take up all the drawable space
         mGameScreenViewport = new ScreenViewport(0, 0, (int) screenWidth, (int) screenHeight);
 
+
+        btnBuild = new PushButton(screenWidth * 0.1f, screenHeight*0.1f, screenWidth*0.18f, screenHeight*0.14f, "btnBuild",  this);
+        btnRoll = new PushButton(screenWidth* 0.1f, screenHeight * 0.9f, screenWidth*0.18f, screenHeight * 0.14f, "btnRoll",  this);
+        btnEndTurn = new PushButton(screenWidth* 0.1f, screenHeight * 0.9f, screenWidth*0.18f, screenHeight * 0.14f, "btnEndTurn",  this);
+
     }
 
     public static byte getCurrentPlayer(){return currentPlayer;}
@@ -102,6 +119,29 @@ public class CatanGameScreen extends GameScreen {
     public void update(ElapsedTime elapsedTime) {
         // Process any touch events occurring since the last update
         Input input = mGame.getInput();
+        btnBuild.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+        //If the dice have already been rolled, update the "End Turn" button, else update the "Roll Dice" button
+        if(diceRolledThisTurn){
+            btnEndTurn.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+        }else{
+            btnRoll.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+        }
+        //TODO Implement UI buttons
+        if (btnBuild.isPushTriggered()){
+            //open build UI
+        }
+
+        if (btnRoll.isPushTriggered()){
+            //Roll the dice
+            diceRolledThisTurn = true;
+        }
+        if(btnEndTurn.isPushTriggered()) {
+            //End the turn
+            diceRolledThisTurn = false;
+            currentPlayer+=1;currentPlayer%=NoOfPlayers;
+            System.out.println(currentPlayer); //TODO This line is for testing to make sure that the modulo approach works, remove
+        }
+
         switch(buildMode){
             case 1: //Settlement
                 for (Node node: BM.nodes) {
@@ -114,6 +154,9 @@ public class CatanGameScreen extends GameScreen {
                 }
                 break;
             case 3: //Town
+                for (Node node: BM.nodes) {
+                    node.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+                }
                 break;
         }
     }
@@ -127,14 +170,13 @@ public class CatanGameScreen extends GameScreen {
      */
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
-        paint.setTextSize(20f); //Temporary resource and die display
         graphics2D.clear(Color.BLUE);
         for (Hex object: HM.Hexes
         ) {
             object.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
         }
         for (Road object: BM.roads
-        ){
+        ) {
             if (object.getBuildState()!=0)
             object.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
         }
@@ -142,6 +184,14 @@ public class CatanGameScreen extends GameScreen {
         ) {
             if (object.getBuildState()!=0)
             object.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
+        }
+
+        btnBuild.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
+        //Depending on whether the dice have been rolled this turn or not, display the correct button
+        if (diceRolledThisTurn){
+            btnEndTurn.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
+        }else{
+            btnRoll.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
         }
     }
 }

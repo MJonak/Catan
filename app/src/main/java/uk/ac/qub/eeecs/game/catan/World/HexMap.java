@@ -13,7 +13,7 @@ public class HexMap {
         // 4, 1, 3, 1, 3, 2, 4, 3, 2, 0, 5, 0; 2, 0, 4, 1, 1, 4, 3
     // and the list of dice rolls
         //11, 12, 9, 10, 8, 3, 6, 2, 5, 8, {0} , 4, 6, 5, 4, 9, 10, 3, 11
-    final short NoOfHexes = 19;
+    final byte NoOfHexes = 19;
     final float XCos30 = 87f; //(float)(100*Math.cos((30*Math.PI)/180));
     final float X = 100f;
     public Hex[] Hexes = new Hex[NoOfHexes];

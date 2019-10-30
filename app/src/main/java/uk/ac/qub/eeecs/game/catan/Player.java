@@ -1,7 +1,6 @@
 package uk.ac.qub.eeecs.game.catan;
 
 public class Player {
-    //TODO figure out how im going to store dev cards and trading - possibly, might just ignore those for the time being
     private final byte playerNo;
     private byte victoryPoints;
     private byte[] resources = new byte[4];

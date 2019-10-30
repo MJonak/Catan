@@ -146,7 +146,7 @@ public class PushButton extends Button {
     public PushButton(float x, float y, float width, float height,
                       String bitmap, GameScreen gameScreen) {
         this(x, y, width, height, bitmap, null,
-                null, null, true, gameScreen);
+                null, null, false, gameScreen);
     }
 
     /**

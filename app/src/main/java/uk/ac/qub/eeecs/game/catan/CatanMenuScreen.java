@@ -33,12 +33,12 @@ public class CatanMenuScreen extends GameScreen {
         assetManager.loadAndAddBitmap("InstructionsBtn", "img/catan/btnInstructions.png");
 
         // Define the spacing that will be used to position the buttons
-        int spacingX = (int)mDefaultLayerViewport.getWidth() / 2;
-        int spacingY = (int)mDefaultLayerViewport.getHeight() / 4;
+        int spacingX = mDefaultScreenViewport.width / 2;
+        int spacingY = mDefaultScreenViewport.height / 4;
 
-        mPlayGameButton = new PushButton(spacingX * 1.0f, spacingY * 3.0f, spacingX, spacingY/1.5f, "PlayBtn", this);
+        mPlayGameButton = new PushButton(spacingX * 1.0f, spacingY * 1.0f, spacingX, spacingY/1.5f, "PlayBtn", this);
         mOptionsButton = new PushButton(spacingX * 1.0f, spacingY * 2.0f, spacingX, spacingY/1.5f, "OptionsBtn", this);
-        mInstructionsButton = new PushButton(spacingX * 1.0f, spacingY * 1.0f, spacingX, spacingY/1.5f, "InstructionsBtn", this);
+        mInstructionsButton = new PushButton(spacingX * 1.0f, spacingY * 3.0f, spacingX, spacingY/1.5f, "InstructionsBtn", this);
     }
 
 

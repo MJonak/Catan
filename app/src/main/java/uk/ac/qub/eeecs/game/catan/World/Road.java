@@ -11,7 +11,6 @@ public class Road extends ClickableObject{
         //The smaller node will always be the start node.
     private byte startNode, endNode, buildState, player, roadType;
 
-    //TODO The default height & width of the road will only work for 2/3 of the roads, need to change it to 40*100 for vertical roads - also redo the bitmap for vertical roads
     Road(byte A, byte B, GameScreen gameScreen){
         super(0, 0, 87, 50, null, gameScreen);
         if(A<B){
@@ -72,11 +71,11 @@ public class Road extends ClickableObject{
     public void setRoadType(byte xy){ this.roadType = xy;}
 
 
+    //TODO remove public once game set-up is functional - used for faking touch events to create roads for testing
     @Override
-    void updateTriggerActions(TouchEvent touchEvent, Vector2 touchLocation) {
+    public void updateTriggerActions(TouchEvent touchEvent, Vector2 touchLocation) {
         if(this.buildState == 0){
-            this.buildState = 1;
-            this.player = CatanGameScreen.getCurrentPlayer();
+            this.buildRoad(CatanGameScreen.getCurrentPlayer());
             this.setBitmap(mGameScreen.getGame().getAssetManager().getBitmap("Road" + roadType + "-" + player));
         }
     }

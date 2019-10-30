@@ -46,13 +46,12 @@ public class Node extends ClickableObject{
         buildState = 2;
     }
 
+
+    //TODO remove public once game set-up is functional - used for faking touch events to create settlements
     @Override
-    void updateTriggerActions(TouchEvent touchEvent, Vector2 touchLocation){
+    public void updateTriggerActions(TouchEvent touchEvent, Vector2 touchLocation){
         if (this.buildState == 0){
-            //build the settlement
-            this.buildState = 1;
-            this.player = CatanGameScreen.getCurrentPlayer();
-            //TODO update bitmap
+            this.buildSettlement(CatanGameScreen.getCurrentPlayer());
             this.setBitmap(mGameScreen.getGame().getAssetManager().getBitmap("Node" + player));
         }
         //TODO add building towns

@@ -20,7 +20,6 @@ public class BuildMap {
 
     //Tested as of 26/07/19, creates all of the roads and every StartNode < EndNode
 
-// TODO (FUTURE) Review using 2 bits to store player #, every node & road would have to default to player 0 - would need extra checks when building
 
     //PROPERTIES
 
@@ -30,13 +29,13 @@ public class BuildMap {
     //CONSTRUCTOR
     public BuildMap(HexMap HM, GameScreen gameScreen){
         //Populate array of nodes
-        for (short i = 0;i<54;i++){
+        for (byte i = 0;i<54;i++){
             nodes[i] = new Node(gameScreen);
         }
         String Processed = ",";
-        //Ending the loop at 17 as 18&17 dont need to be checked - all nodes will have been processed
-            //TODO even more efficiency is attainable by iterating hexes 0-11 and then 18, leave out the second circle (12-17)
-        for (int h = 0; h < 19; h++) {
+
+        //Vertices of the hexes 0-11 & 18 make up all of the nodes on the map, so hexes 12-17 do not need to be processed.
+        for (byte h = 0; h < 19; h++) {
             for (byte n = 0; n <6; n++){
                 if (!Processed.contains("," + HM.Hexes[h].getNode(n) + ",")){
                     switch(n) {
