@@ -24,14 +24,15 @@ import uk.ac.qub.eeecs.game.catan.World.Road;
 public class CatanGameScreen extends GameScreen {
 
     //Game properties
-    private HexMap HM;
-    private BuildMap BM;
+    private HexMap HM; private BuildMap BM;
     private byte NoOfPlayers = 2;
     private static byte buildMode, currentPlayer; //buildMode 0 - nothing; 1 - settlement ; 2 - road ; 3 - town
     private boolean setup, diceRolledThisTurn;
+    private byte UIMode = 0; //0 - default view; 1 - buildUI;
     private Player[] PlayerList = new Player[NoOfPlayers];
-    private PushButton btnBuild, btnRoll, btnEndTurn;
-
+    private PushButton btnBuild, btnRoll, btnEndTurn, btnSettlement, btnRoad, btnBack;
+    private PushButton[] buildUI = new PushButton[3];
+    private PushButton[] defaultUI = new PushButton[1];
     //Viewport Properties
     private final static float WORLD_WIDTH = 1210.0f;
     private final static float WORLD_HEIGHT = 1200.0f;
@@ -71,6 +72,9 @@ public class CatanGameScreen extends GameScreen {
         mGame.getAssetManager().loadAndAddBitmap("btnBuild", "img/catan/btnBuild.png");
         mGame.getAssetManager().loadAndAddBitmap("btnRoll", "img/catan/btnRollDice.png");
         mGame.getAssetManager().loadAndAddBitmap("btnEndTurn", "img/catan/btnEndTurn.png");
+        mGame.getAssetManager().loadAndAddBitmap("btnSettlement", "img/catan/btnSettlement.png");
+        mGame.getAssetManager().loadAndAddBitmap("btnRoad", "img/catan/btnRoad.png");
+        mGame.getAssetManager().loadAndAddBitmap("btnBack", "img/catan/btnBack.png");
         HM = new HexMap(this);
         BM = new BuildMap(HM,this);
         setup = true;
@@ -103,10 +107,16 @@ public class CatanGameScreen extends GameScreen {
         mGameScreenViewport = new ScreenViewport(0, 0, (int) screenWidth, (int) screenHeight);
 
 
+        //Define all the UI buttons
+        //TODO calculate optimal spacing & use it
         btnBuild = new PushButton(screenWidth * 0.1f, screenHeight*0.1f, screenWidth*0.18f, screenHeight*0.14f, "btnBuild",  this);
         btnRoll = new PushButton(screenWidth* 0.1f, screenHeight * 0.9f, screenWidth*0.18f, screenHeight * 0.14f, "btnRoll",  this);
         btnEndTurn = new PushButton(screenWidth* 0.1f, screenHeight * 0.9f, screenWidth*0.18f, screenHeight * 0.14f, "btnEndTurn",  this);
-
+        btnSettlement = new PushButton(screenWidth * 0.1f, screenHeight*0.1f, screenWidth*0.18f, screenHeight*0.14f, "btnSettlement",  this);
+        btnRoad = new PushButton(screenWidth * 0.1f, screenHeight*0.3f, screenWidth*0.18f, screenHeight*0.14f, "btnRoad",  this);
+        btnBack = new PushButton(screenWidth * 0.9f, screenHeight*0.9f, screenWidth*0.08f, screenHeight*0.1f, "btnBack",  this);
+        buildUI[0] = btnSettlement; buildUI[1] = btnRoad; buildUI[2] = btnBack;
+        defaultUI[0] = btnBuild;
     }
 
     public static byte getCurrentPlayer(){return currentPlayer;}
@@ -119,17 +129,59 @@ public class CatanGameScreen extends GameScreen {
     public void update(ElapsedTime elapsedTime) {
         // Process any touch events occurring since the last update
         Input input = mGame.getInput();
-        btnBuild.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+        switch (UIMode){
+            case 0://Update the default UI
+                for (int i = 0; i < defaultUI.length; i++) {
+                    defaultUI[i].update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+                }
+                if (btnBuild.isPushTriggered()){
+                //Open build UI
+                UIMode = 1;
+            }
+                break;
+            case 1://Update the buildUI
+                for (int i = 0; i < buildUI.length; i++) {
+                    buildUI[i].update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+                }
+                //Implement button functionality
+                if(btnSettlement.isPushTriggered()){
+                    buildMode = 1;
+                }
+                if(btnRoad.isPushTriggered()){
+                    buildMode = 2;
+                }
+                if(btnBack.isPushTriggered()){
+                    UIMode = 0;
+                    buildMode = 0;
+                }
+                //Update the clickable map elements for building
+                //TODO probably best to have a separate UI mode for actually building where the only visible button is btnBack
+                switch(buildMode){
+                    case 1: //Settlement
+                        for (Node node: BM.nodes) {
+                            node.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+                        }
+                        break;
+                    case 2: //Road
+                        for (Road road: BM.roads){
+                            road.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+                        }
+                        break;
+                    case 3: //Town
+                        for (Node node: BM.nodes) {
+                            node.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+                        }
+                        break;
+                }
+                break;
+        }
         //If the dice have already been rolled, update the "End Turn" button, else update the "Roll Dice" button
         if(diceRolledThisTurn){
             btnEndTurn.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
         }else{
             btnRoll.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
         }
-        //TODO Implement UI buttons
-        if (btnBuild.isPushTriggered()){
-            //open build UI
-        }
+
 
         if (btnRoll.isPushTriggered()){
             //Roll the dice
@@ -137,28 +189,12 @@ public class CatanGameScreen extends GameScreen {
         }
         if(btnEndTurn.isPushTriggered()) {
             //End the turn
-            diceRolledThisTurn = false;
+            diceRolledThisTurn = false; UIMode = 0; buildMode = 0;
             currentPlayer+=1;currentPlayer%=NoOfPlayers;
             System.out.println(currentPlayer); //TODO This line is for testing to make sure that the modulo approach works, remove
         }
 
-        switch(buildMode){
-            case 1: //Settlement
-                for (Node node: BM.nodes) {
-                    node.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
-                }
-                break;
-            case 2: //Road
-                for (Road road: BM.roads){
-                    road.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
-                }
-                break;
-            case 3: //Town
-                for (Node node: BM.nodes) {
-                    node.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
-                }
-                break;
-        }
+
     }
 
     Paint paint = new Paint();
@@ -186,7 +222,20 @@ public class CatanGameScreen extends GameScreen {
             object.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
         }
 
-        btnBuild.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
+
+        switch (UIMode){
+            case 0://Draw the default UI
+                for (int i = 0; i < defaultUI.length; i++) {
+                    defaultUI[i].draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
+                }
+                break;
+            case 1://Draw the buildUI
+                for (int i = 0; i < buildUI.length; i++) {
+                    buildUI[i].draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
+                }
+                break;
+        }
+
         //Depending on whether the dice have been rolled this turn or not, display the correct button
         if (diceRolledThisTurn){
             btnEndTurn.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
