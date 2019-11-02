@@ -11,6 +11,7 @@ import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.util.BoundingBox;
 import uk.ac.qub.eeecs.gage.util.Vector2;
+import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
@@ -25,6 +26,7 @@ public class CatanGameScreen extends GameScreen {
 
     //Game properties
     private HexMap HM; private BuildMap BM;
+    private GameObject[] tokens = new GameObject[19];
     private byte NoOfPlayers = 2;
     private static byte buildMode, currentPlayer; //buildMode 0 - nothing; 1 - settlement ; 2 - road ; 3 - town
     private boolean setup, diceRolledThisTurn;
@@ -75,6 +77,17 @@ public class CatanGameScreen extends GameScreen {
         mGame.getAssetManager().loadAndAddBitmap("btnSettlement", "img/catan/btnSettlement.png");
         mGame.getAssetManager().loadAndAddBitmap("btnRoad", "img/catan/btnRoad.png");
         mGame.getAssetManager().loadAndAddBitmap("btnBack", "img/catan/btnBack.png");
+        mGame.getAssetManager().loadAndAddBitmap("token2", "img/catan/token2.png");
+        mGame.getAssetManager().loadAndAddBitmap("token3", "img/catan/token3.png");
+        mGame.getAssetManager().loadAndAddBitmap("token4", "img/catan/token4.png");
+        mGame.getAssetManager().loadAndAddBitmap("token5", "img/catan/token5.png");
+        mGame.getAssetManager().loadAndAddBitmap("token6", "img/catan/token6.png");
+        mGame.getAssetManager().loadAndAddBitmap("token0", "img/catan/token.png"); //Desert Token
+        mGame.getAssetManager().loadAndAddBitmap("token8", "img/catan/token8.png");
+        mGame.getAssetManager().loadAndAddBitmap("token9", "img/catan/token9.png");
+        mGame.getAssetManager().loadAndAddBitmap("token10", "img/catan/token10.png");
+        mGame.getAssetManager().loadAndAddBitmap("token11", "img/catan/token11.png");
+        mGame.getAssetManager().loadAndAddBitmap("token12", "img/catan/token12.png");
         HM = new HexMap(this);
         BM = new BuildMap(HM,this);
         setup = true;
@@ -85,6 +98,11 @@ public class CatanGameScreen extends GameScreen {
             PlayerList[i] = new Player(i);
         }
 
+        //Populate the tokens array with a token for each hex - using a fori instead of a foreach loop as i is needed to iterate through the tokens array
+        for (int i = 0; i <19 ; i++) {
+            tokens[i] = new GameObject(HM.Hexes[i].position.x, HM.Hexes[i].position.y, 40f, 40f, mGame.getAssetManager().getBitmap("token" + HM.Hexes[i].getDiceNo()), this);
+        }
+        //Fake touch events to simulate the placing of settlements & roads at the start of the game
         currentPlayer = 0;
         TouchEvent te = new TouchEvent(); Vector2 v2 = new Vector2();
         BM.nodes[7].updateTriggerActions(te, v2); BM.roads[56].updateTriggerActions(te, v2); BM.nodes[36].updateTriggerActions(te, v2);BM.roads[36].updateTriggerActions(te, v2);
@@ -191,7 +209,6 @@ public class CatanGameScreen extends GameScreen {
             //End the turn
             diceRolledThisTurn = false; UIMode = 0; buildMode = 0;
             currentPlayer+=1;currentPlayer%=NoOfPlayers;
-            System.out.println(currentPlayer); //TODO This line is for testing to make sure that the modulo approach works, remove
         }
 
 
@@ -221,7 +238,10 @@ public class CatanGameScreen extends GameScreen {
             if (object.getBuildState()!=0)
             object.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
         }
-
+        for (GameObject token:tokens
+        ) {
+            token.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
+        }
 
         switch (UIMode){
             case 0://Draw the default UI
