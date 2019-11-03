@@ -3,7 +3,7 @@ package uk.ac.qub.eeecs.game.catan;
 public class Player {
     private final byte playerNo;
     private byte victoryPoints;
-    private byte[] resources = new byte[4];
+    private byte[] resources = new byte[5];
     //Dev cards
     //trading
     public Player(byte playerNumber){
@@ -65,5 +65,11 @@ public class Player {
         return sum;
     }
 
+    /**
+     * Returns the amount of the specified resource that the player has.
+     * @param resourceNo Corresponding Resource number: 0 is brick, 1 is wool, 2 is ore, 3 is  grain, 4 is wood
+     * @return the amount of resource the player has
+     */
+    public byte getResource(byte resourceNo){return this.resources[resourceNo];}
 
 }

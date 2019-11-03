@@ -28,6 +28,7 @@ public class CatanGameScreen extends GameScreen {
     private HexMap HM; private BuildMap BM;
     private GameObject[] tokens = new GameObject[19];
     private byte NoOfPlayers = 2;
+    private byte diceRoll;
     private static byte buildMode, currentPlayer; //buildMode 0 - nothing; 1 - settlement ; 2 - road ; 3 - town
     private boolean setup, diceRolledThisTurn;
     private byte UIMode = 0; //0 - default view; 1 - buildUI;
@@ -203,12 +204,28 @@ public class CatanGameScreen extends GameScreen {
 
         if (btnRoll.isPushTriggered()){
             //Roll the dice
+            //Using 3 byte casts as the inner two are required to round the doubles before adding (to prevent 13/14 from being reached in the event of both random() calls returning the max value of 1.0)
+            //And the outer cast is due to 2 bytes making an int apparently, even though the maximum possible value this function could be before the cast is 12
+            diceRoll = (byte)((byte)(Math.random()*6+1) + (byte)(Math.random()*6+1));
+            //Give out resources
+            for (Hex h:HM.Hexes) {
+                if (h.getDiceNo() == diceRoll){                             //Found a hex with the matching # token
+                    for (byte i = 0; i < 6; i++) {                      //Iterate through the nodes
+                        if(BM.nodes[h.getNode(i)].getBuildState()!=0){  //Found a node on this hex which has a building
+                            // Give the Player who owns the building the resource(s)
+                            PlayerList[BM.nodes[h.getNode(i)].getPlayer()].addResource(h.getResource(), BM.nodes[h.getNode(i)].getBuildState());
+                        }
+                    }
+                }
+            }
             diceRolledThisTurn = true;
+            System.out.println(diceRoll);
         }
         if(btnEndTurn.isPushTriggered()) {
             //End the turn
             diceRolledThisTurn = false; UIMode = 0; buildMode = 0;
             currentPlayer+=1;currentPlayer%=NoOfPlayers;
+            System.out.println("Plyr#: " + currentPlayer + "|" + PlayerList[currentPlayer].getResource((byte)0) + "-Brick " + PlayerList[currentPlayer].getResource((byte)1) + "-Wool " + PlayerList[currentPlayer].getResource((byte)2) + "-Ore " + PlayerList[currentPlayer].getResource((byte)3) + "-Grain " + PlayerList[currentPlayer].getResource((byte)4) + "-Wood");
         }
 
 
@@ -257,8 +274,10 @@ public class CatanGameScreen extends GameScreen {
         }
 
         //Depending on whether the dice have been rolled this turn or not, display the correct button
+        paint.setTextSize(20f);
         if (diceRolledThisTurn){
             btnEndTurn.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
+            graphics2D.drawText(String.valueOf(diceRoll), 300f, 100f, paint);
         }else{
             btnRoll.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
         }
