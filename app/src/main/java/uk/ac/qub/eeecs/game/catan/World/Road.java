@@ -28,11 +28,12 @@ public class Road extends ClickableObject{
     public void buildRoad(byte playerNo){
         buildState = 1;
         player = playerNo;
+        CatanGameScreen.getCurrentPlayer().removeResourcesFor((byte)3);
     }
 
     /**
      * Returns the current build state of this node
-     * @return 0 - empty ; 1 - settlement ; 2 - town
+     * @return 0 - empty ; 1 - road built
      */
     public byte getBuildState(){return this.buildState;}
 
@@ -65,7 +66,7 @@ public class Road extends ClickableObject{
     }
 
     /**
-     * Sets the road type - part of the suffix which determines which bitmap to use when the road is built
+     * Sets the road type (part of the suffix which determines which bitmap to use when the road is built)
      * @param xy 12 for a downward sloping road; 23 for a vertical road; 34 for an upward sloping road
      */
     public void setRoadType(byte xy){ this.roadType = xy;}
@@ -75,8 +76,22 @@ public class Road extends ClickableObject{
     @Override
     public void updateTriggerActions(TouchEvent touchEvent, Vector2 touchLocation) {
         if(this.buildState == 0){
-            this.buildRoad(CatanGameScreen.getCurrentPlayer());
-            this.setBitmap(mGameScreen.getGame().getAssetManager().getBitmap("Road" + roadType + "-" + player));
+            if(CatanGameScreen.turnNo<3 && CatanGameScreen.setupSettlementPlaced){ //Setup phase & players settlement has been placed yet (ie road can now be placed this turn)
+                this.buildState = 1;
+                this.player = CatanGameScreen.getCurrentPlayer().getPlayerNo();
+                this.setBitmap(mGameScreen.getGame().getAssetManager().getBitmap("Road" + roadType + "-" + player));
+                //Next players turn
+                CatanGameScreen.currentPlayer++;
+                if (CatanGameScreen.currentPlayer>=CatanGameScreen.NoOfPlayers){
+                    CatanGameScreen.currentPlayer=0;
+                    CatanGameScreen.turnNo++;
+                }
+                CatanGameScreen.setupSettlementPlaced = false;
+            } else {    //Normal Turn
+                this.buildRoad(CatanGameScreen.getCurrentPlayer().getPlayerNo());
+                this.setBitmap(mGameScreen.getGame().getAssetManager().getBitmap("Road" + roadType + "-" + player));
+                CatanGameScreen.UIMode = 0;
+            }
         }
     }
 

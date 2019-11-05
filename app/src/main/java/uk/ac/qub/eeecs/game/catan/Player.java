@@ -3,7 +3,7 @@ package uk.ac.qub.eeecs.game.catan;
 public class Player {
     private final byte playerNo;
     private byte victoryPoints;
-    private byte[] resources = new byte[5];
+    public byte[] resources = new byte[5]; //0 is brick, 1 is wool, 2 is ore, 3 is  grain, 4 is wood //TODO reset to private once game set up is functional, need to set all resources to 0 after faking touch events
     //Dev cards
     //trading
     public Player(byte playerNumber){
@@ -25,16 +25,44 @@ public class Player {
      */
     public void removeResource(byte resourceNo, byte quantity){this.resources[resourceNo] -= quantity;}
 
+
     /**
-     * Checks if the player's quantity of the specified resource exceeds or is equal to the quantity specified
-     * @param resourceNo Resource number to check
-     * @param quantity Required quantity
+     * Checks if the player has sufficient resources to build a building of the specified type
+     * @param buildingType number corresponding to the building to be built, 1 is a settlement, 2 is a city, 3 is a road
      * @return
      */
-    public boolean hasEnoughResource(byte resourceNo, byte quantity){
-        return this.resources[resourceNo] >= quantity;
+    public boolean hasEnoughResourcesFor(byte buildingType){
+        switch(buildingType){
+            case 1:
+                if(resources[0]>0 && resources[1]>0 && resources[3]>0 && resources[4]>0)return true;
+                break;
+            case 2:
+                if(resources[2]>2 && resources[3]>1) return true;
+                break;
+            case 3:
+                if(resources[0]>0 && resources[4]>0) return true;
+                break;
+        }
+        return false;
     }
 
+    /**
+     * Deduct the resources required to build the specified building
+     * @param buildingType number corresponding to the building to be built, 1 is a settlement, 2 is a city, 3 is a road
+     */
+    public void removeResourcesFor(byte buildingType){
+        switch(buildingType){
+            case 1:
+                resources[0]-=1; resources[1]-=1; resources[3]-=1; resources[4]-=1;
+                break;
+            case 2:
+                resources[2]-=3; resources[3]-=2;
+                break;
+            case 3:
+                resources[0]-=1; resources[4]-=1;
+                break;
+        }
+    }
     /**
      * Add victory points to the players running total. Call this method when the player should be awarded victory points
      * @param quantity Number of victory points to be awarded

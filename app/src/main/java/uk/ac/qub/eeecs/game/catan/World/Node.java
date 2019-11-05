@@ -36,14 +36,18 @@ public class Node extends ClickableObject{
     public void buildSettlement(byte playerNo){
         buildState = 1;
         player = playerNo;
+        CatanGameScreen.getCurrentPlayer().removeResourcesFor((byte)1);
+        CatanGameScreen.getCurrentPlayer().addVictoryPoints((byte)1);
     }
 
     /**
      * Marks that the settlement on this node has now been upgraded to a town.
      * Check that the playerNo matches and that there is already a settlement built.
      */
-    public void buildTown(){
+    public void buildTown() {
         buildState = 2;
+        CatanGameScreen.getCurrentPlayer().removeResourcesFor((byte)2);
+        CatanGameScreen.getCurrentPlayer().addVictoryPoints((byte)1);
     }
 
 
@@ -51,11 +55,18 @@ public class Node extends ClickableObject{
     @Override
     public void updateTriggerActions(TouchEvent touchEvent, Vector2 touchLocation){
         if (this.buildState == 0){
-            this.buildSettlement(CatanGameScreen.getCurrentPlayer());
-            this.setBitmap(mGameScreen.getGame().getAssetManager().getBitmap("Node" + player));
+            if(CatanGameScreen.turnNo<3 && !CatanGameScreen.setupSettlementPlaced){ //Setup phase & players settlement hasn't been placed yet
+                this.buildState = 1; this.player = CatanGameScreen.getCurrentPlayer().getPlayerNo();
+                this.setBitmap(mGameScreen.getGame().getAssetManager().getBitmap("Node" + player));
+                CatanGameScreen.getCurrentPlayer().addVictoryPoints((byte)1);
+                CatanGameScreen.setupSettlementPlaced = true;
+            } else {    //Normal turn
+                this.buildSettlement(CatanGameScreen.getCurrentPlayer().getPlayerNo());
+                this.setBitmap(mGameScreen.getGame().getAssetManager().getBitmap("Node" + player));
+            }
         }
         //TODO add building towns
-
+        CatanGameScreen.UIMode = 0;
     }
 
 
