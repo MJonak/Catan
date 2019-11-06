@@ -3,12 +3,13 @@ package uk.ac.qub.eeecs.game.catan;
 public class Player {
     private final byte playerNo;
     private byte victoryPoints;
-    public byte[] resources = new byte[5]; //0 is brick, 1 is wool, 2 is ore, 3 is  grain, 4 is wood //TODO reset to private once game set up is functional, need to set all resources to 0 after faking touch events
+    private byte[] resources = new byte[]{4, 2, 0, 2, 4}; //0 is brick, 1 is wool, 2 is ore, 3 is  grain, 4 is wood || Starting off with this array to allow players to build initial settlements & roads
     //Dev cards
     //trading
     public Player(byte playerNumber){
         this.playerNo = playerNumber;
         victoryPoints = 0;
+
     }
 
     /**

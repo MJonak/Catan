@@ -2,6 +2,7 @@ package uk.ac.qub.eeecs.game.catan;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 
 import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
@@ -27,13 +28,12 @@ public class CatanGameScreen extends GameScreen {
     //Game properties
     private byte diceRoll;
     private boolean diceRolledThisTurn;
-    public static short turnNo;
-    public static boolean setupSettlementPlaced;
-    public static byte currentPlayer;
+    private static short turnNo;
+    private static byte currentPlayer;
     public static byte UIMode = 0; //0 - default view; 1 - buildUI; //TODO made the UIMode static to allow resetting the ui back to default after a touch event occurs on a node/road, could change back if better option is found
     private static byte buildMode; //buildMode 0 - nothing; 1 - settlement ; 2 - city ; 3 - road
-    public static byte NoOfPlayers = 2;
-    public static Player[] PlayerList = new Player[NoOfPlayers];
+    private static byte NoOfPlayers = 2;
+    private static Player[] PlayerList = new Player[NoOfPlayers];
     //Board Elements
     private HexMap HM; private BuildMap BM;
     private GameObject[] tokens = new GameObject[19];
@@ -97,9 +97,9 @@ public class CatanGameScreen extends GameScreen {
         BM = new BuildMap(HM,this);
         currentPlayer = 0;
         turnNo = 1;
-        setupSettlementPlaced = false;
         diceRolledThisTurn = false;
-        buildMode = 0;
+        buildMode = 1;
+        UIMode = 10; //Meaning first stage of setup
         for (byte i = 0; i<NoOfPlayers;i++){
             PlayerList[i] = new Player(i);
         }
@@ -108,19 +108,7 @@ public class CatanGameScreen extends GameScreen {
         for (int i = 0; i <19 ; i++) {
             tokens[i] = new GameObject(HM.Hexes[i].position.x, HM.Hexes[i].position.y, 40f, 40f, mGame.getAssetManager().getBitmap("token" + HM.Hexes[i].getDiceNo()), this);
         }
- /*      //Fake touch events to simulate the placing of settlements & roads at the start of the game
-        currentPlayer = 0;
-        TouchEvent te = new TouchEvent(); Vector2 v2 = new Vector2();
-        BM.nodes[34].updateTriggerActions(te, v2); BM.roads[56].updateTriggerActions(te, v2); BM.nodes[36].updateTriggerActions(te, v2);BM.roads[36].updateTriggerActions(te, v2);
-        currentPlayer = 1;
-        BM.nodes[30].updateTriggerActions(te, v2); BM.roads[30].updateTriggerActions(te, v2); BM.nodes[52].updateTriggerActions(te, v2); BM.roads[39].updateTriggerActions(te, v2);
-        currentPlayer = 0;
-        for (int i = 0; i < NoOfPlayers; i++) {
-            for (int j = 0; j < 5; j++) {
-                PlayerList[i].resources[j] = 0;
-            }
-        }
- */
+
         //Viewport constructor
         float screenWidth = mGame.getScreenWidth();
         float screenHeight = mGame.getScreenHeight();
@@ -151,6 +139,17 @@ public class CatanGameScreen extends GameScreen {
     //Method used to allow the node&road classes to access the current player number when a touch event occurs
     public static Player getCurrentPlayer(){return PlayerList[currentPlayer];}
 
+
+    private void endTurn(){
+        //Next player
+        currentPlayer++;
+        // If the last player has had their go, increase the turn counter and reset back to player 0
+        if(currentPlayer>=NoOfPlayers){
+            currentPlayer %= NoOfPlayers;
+            turnNo++;
+        }
+    }
+
     /**
      * Update the card demo screen
      *
@@ -158,8 +157,10 @@ public class CatanGameScreen extends GameScreen {
      */
     @Override
     public void update(ElapsedTime elapsedTime) {
-        // Process any touch events occurring since the last update
+
         if(turnNo>2) {
+ //Normal Turn Cycle
+            //Update the correct buttons & implement functionality
             switch (UIMode) {
                 case 0://Update the default UI
                     for (int i = 0; i < defaultUI.length; i++) {
@@ -219,7 +220,7 @@ public class CatanGameScreen extends GameScreen {
                 btnRoll.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
             }
 
-
+            //Rolling dice
             if (btnRoll.isPushTriggered()) {
                 //Roll the dice
                 //Using 3 byte casts as the inner two are required to round the doubles before adding (to prevent 13/14 from being reached in the event of both random() calls returning the max value of 1.0)
@@ -239,35 +240,65 @@ public class CatanGameScreen extends GameScreen {
                 diceRolledThisTurn = true;
                 System.out.println(diceRoll);
             }
+
+            //Ending turn
             if (btnEndTurn.isPushTriggered()) {
                 //End the turn
                 diceRolledThisTurn = false;
                 UIMode = 0;
-                currentPlayer++;
-                // If the last player has had their go, increase the turn timer and reset back to player 0
-                if(currentPlayer>=NoOfPlayers){
-                    currentPlayer %= NoOfPlayers;
-                    turnNo++;
-                }
+                endTurn();
 
                 System.out.println("Plyr#: " + currentPlayer + "|" + PlayerList[currentPlayer].getResource((byte) 0) + "-Brick " + PlayerList[currentPlayer].getResource((byte) 1) + "-Wool " + PlayerList[currentPlayer].getResource((byte) 2) + "-Ore " + PlayerList[currentPlayer].getResource((byte) 3) + "-Grain " + PlayerList[currentPlayer].getResource((byte) 4) + "-Wood" + "|| VP:" + PlayerList[currentPlayer].getVictoryPoints());
             }
-        } else { //Setup
-            //If the settlement hasn't been placed yet update all nodes to allow player to build a settlement
-            if(!setupSettlementPlaced){
-                for (Node n: BM.nodes) {
-                    n.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
-                }
-            } else { //Otherwise update all the roads
-                for (Road r: BM.roads) {
-                    r.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
-                }
+/*Setup*/} else {
+            switch(UIMode){
+                case 11:        //Road button -> Place road
+                    btnRoad.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+                    if(btnRoad.isPushTriggered()){
+                        buildMode = 3;
+                    }
+                    break;
+                case 12:        //End Turn -> settlement button
+                    btnEndTurn.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+                    if(btnEndTurn.isPushTriggered()){
+                        buildMode = 1;
+                        if(turnNo==2 && currentPlayer==NoOfPlayers-1){
+                            UIMode = 0;
+                            for (Hex h: HM.Hexes) {
+                                for (byte n = 0; n < 6; n++) {
+                                    if(BM.nodes[h.getNode(n)].getBuildState()==1){
+                                        PlayerList[BM.nodes[h.getNode(n)].getPlayer()].addResource(h.getResource(), (byte)1);
+                                    }
+                                }
+                            }
+                        }else{
+                            UIMode = 10;
+                        }
+                        endTurn();
+                    }
+                    break;
             }
+
+            //Update relevant map elements
+            switch(buildMode){
+                case 1:
+                    for (Node n:BM.nodes) {
+                        n.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+                    }
+                    break;
+                case 3:
+                    for (Road r:BM.roads) {
+                        r.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+                    }
+                    break;
+            }
+
         }
 
     }
 
     Paint paint = new Paint();
+
     /**
      * Draw the card demo screen
      *
@@ -276,6 +307,7 @@ public class CatanGameScreen extends GameScreen {
      */
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
+        //Draw the board
         graphics2D.clear(Color.BLUE);
         for (Hex object: HM.Hexes
         ) {
@@ -296,6 +328,7 @@ public class CatanGameScreen extends GameScreen {
             token.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
         }
 
+        //Draw the UI elements
         switch (UIMode){
             case 0://Draw the default UI
                 for (int i = 0; i < defaultUI.length; i++) {
@@ -307,16 +340,37 @@ public class CatanGameScreen extends GameScreen {
                     buildUI[i].draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
                 }
                 break;
+                            //SETUP PHASE
+            case 10:
+                btnSettlement.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
+                break;
+            case 11:
+                btnRoad.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
+                break;
+            case 12:
+                btnEndTurn.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
+                break;
+
+
         }
 
         //Depending on whether the dice have been rolled this turn or not, display the correct button
-        paint.setTextSize(20f);
-        if (diceRolledThisTurn){
-            btnEndTurn.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
-            graphics2D.drawText(String.valueOf(diceRoll), 300f, 100f, paint);
-        }else{
-            btnRoll.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
+        if(turnNo>2) {
+            paint.setTextSize(20f);
+            if (diceRolledThisTurn) {
+                btnEndTurn.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
+                graphics2D.drawText(String.valueOf(diceRoll), 300f, 100f, paint);
+            } else {
+                btnRoll.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
+            }
+            graphics2D.drawText(String.valueOf(currentPlayer), 330f, 100f, paint);
+            paint.setTypeface(Typeface.MONOSPACE);
+            float pos = 30f;
+            graphics2D.drawText("  | Br| Wl| Or| Gr| Wd|| VP|", mGameScreenViewport.width*0.70f, pos, paint);
+            for (Player p:PlayerList) {
+                pos+=25;
+                graphics2D.drawText(String.format("%1$s | %2$s | %3$d | %4$d | %5$d | %6$d || %7$d", p.getPlayerNo(), p.getResource((byte)0), p.getResource((byte)1), p.getResource((byte)2), p.getResource((byte)3), p.getResource((byte)4), p.getVictoryPoints()  ), mGameScreenViewport.width*0.70f, pos, paint);
+            }
         }
-        graphics2D.drawText(String.valueOf(currentPlayer), 330f, 100f, paint);
     }
 }

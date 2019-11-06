@@ -72,26 +72,12 @@ public class Road extends ClickableObject{
     public void setRoadType(byte xy){ this.roadType = xy;}
 
 
-    //TODO remove public once game set-up is functional - used for faking touch events to create roads for testing
     @Override
-    public void updateTriggerActions(TouchEvent touchEvent, Vector2 touchLocation) {
+    void updateTriggerActions(TouchEvent touchEvent, Vector2 touchLocation) {
         if(this.buildState == 0){
-            if(CatanGameScreen.turnNo<3 && CatanGameScreen.setupSettlementPlaced){ //Setup phase & players settlement has been placed yet (ie road can now be placed this turn)
-                this.buildState = 1;
-                this.player = CatanGameScreen.getCurrentPlayer().getPlayerNo();
-                this.setBitmap(mGameScreen.getGame().getAssetManager().getBitmap("Road" + roadType + "-" + player));
-                //Next players turn
-                CatanGameScreen.currentPlayer++;
-                if (CatanGameScreen.currentPlayer>=CatanGameScreen.NoOfPlayers){
-                    CatanGameScreen.currentPlayer=0;
-                    CatanGameScreen.turnNo++;
-                }
-                CatanGameScreen.setupSettlementPlaced = false;
-            } else {    //Normal Turn
-                this.buildRoad(CatanGameScreen.getCurrentPlayer().getPlayerNo());
-                this.setBitmap(mGameScreen.getGame().getAssetManager().getBitmap("Road" + roadType + "-" + player));
-                CatanGameScreen.UIMode = 0;
-            }
+            this.buildRoad(CatanGameScreen.getCurrentPlayer().getPlayerNo());
+            this.setBitmap(mGameScreen.getGame().getAssetManager().getBitmap("Road" + roadType + "-" + player));
+            if (CatanGameScreen.UIMode==11)CatanGameScreen.UIMode++; else CatanGameScreen.UIMode = 0;
         }
     }
 

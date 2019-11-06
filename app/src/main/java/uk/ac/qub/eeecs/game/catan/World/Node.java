@@ -51,22 +51,16 @@ public class Node extends ClickableObject{
     }
 
 
-    //TODO remove public once game set-up is functional - used for faking touch events to create settlements
+
     @Override
-    public void updateTriggerActions(TouchEvent touchEvent, Vector2 touchLocation){
+    void updateTriggerActions(TouchEvent touchEvent, Vector2 touchLocation){
         if (this.buildState == 0){
-            if(CatanGameScreen.turnNo<3 && !CatanGameScreen.setupSettlementPlaced){ //Setup phase & players settlement hasn't been placed yet
-                this.buildState = 1; this.player = CatanGameScreen.getCurrentPlayer().getPlayerNo();
-                this.setBitmap(mGameScreen.getGame().getAssetManager().getBitmap("Node" + player));
-                CatanGameScreen.getCurrentPlayer().addVictoryPoints((byte)1);
-                CatanGameScreen.setupSettlementPlaced = true;
-            } else {    //Normal turn
-                this.buildSettlement(CatanGameScreen.getCurrentPlayer().getPlayerNo());
-                this.setBitmap(mGameScreen.getGame().getAssetManager().getBitmap("Node" + player));
-            }
+            this.buildSettlement(CatanGameScreen.getCurrentPlayer().getPlayerNo());
+            this.setBitmap(mGameScreen.getGame().getAssetManager().getBitmap("Node" + player));
+            if(CatanGameScreen.UIMode == 10)CatanGameScreen.UIMode++;else CatanGameScreen.UIMode = 0;
         }
         //TODO add building towns
-        CatanGameScreen.UIMode = 0;
+
     }
 
 
