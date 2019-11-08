@@ -28,14 +28,15 @@ public class CatanGameScreen extends GameScreen {
     //Game properties
     private byte diceRoll;
     private boolean diceRolledThisTurn;
-    private static short turnNo;
+    public static short turnNo;
     private static byte currentPlayer;
     public static byte UIMode = 0; //0 - default view; 1 - buildUI; //TODO made the UIMode static to allow resetting the ui back to default after a touch event occurs on a node/road, could change back if better option is found
     private static byte buildMode; //buildMode 0 - nothing; 1 - settlement ; 2 - city ; 3 - road
     private static byte NoOfPlayers = 2;
     private static Player[] PlayerList = new Player[NoOfPlayers];
     //Board Elements
-    private HexMap HM; private BuildMap BM;
+    private HexMap HM;
+    public static BuildMap BM;
     private GameObject[] tokens = new GameObject[19];
     //UI Elements
     private PushButton btnBuild, btnRoll, btnEndTurn, btnSettlement, btnRoad, btnBack;

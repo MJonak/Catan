@@ -17,7 +17,7 @@ public class Player {
      * @param resourceNo Resource number stored in relevant hex
      * @param quantity Quantity given, based off of number of settlements/cities on relevant hexes
      */
-    public void addResource(byte resourceNo, byte quantity){this.resources[resourceNo] += quantity;}
+    public void addResource(byte resourceNo, byte quantity){ if(resourceNo<5){this.resources[resourceNo] += quantity;}}
 
     /**
      * Removes the specified quantity of the corresponding resource from the players inventory

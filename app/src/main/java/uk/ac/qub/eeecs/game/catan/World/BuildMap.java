@@ -1,6 +1,7 @@
 package uk.ac.qub.eeecs.game.catan.World;
 
 import uk.ac.qub.eeecs.gage.world.GameScreen;
+import uk.ac.qub.eeecs.game.catan.CatanGameScreen;
 
 public class BuildMap {
     //The build map will be used to store arrays of:
@@ -73,22 +74,22 @@ public class BuildMap {
         //Create the roads
         //Step 1 - sequentially from 0-53
         for(byte i = 0; i <53; i++){
-            roads[i] = new Road(i, (byte)(i+1), gameScreen);
+            roads[i] = new Road(i, i, (byte)(i+1), gameScreen);
         }
 
         //Step 2 - roads linking in and out of hexes 12-17 outer edge (check map diagram)
         byte a = 0; // Used to correct the difference between the node numbers as it decreases
         for (byte i = 31;i<45;i+=3){
-            roads[i+22] = new Road((byte)(i-29+a), i, gameScreen);
-            roads[i+23] = new Road((byte)(i+1), (byte)(i+18-a), gameScreen);
-            roads[i+24] = new Road((byte)(i-27+a), (byte)(i+2), gameScreen);
+            roads[i+22] = new Road((byte)(i+22),(byte)(i-29+a), i, gameScreen);
+            roads[i+23] = new Road((byte)(i+23),(byte)(i+1), (byte)(i+18-a), gameScreen);
+            roads[i+24] = new Road((byte)(i+24),(byte)(i-27+a), (byte)(i+2), gameScreen);
             a+=2;
         }
         //Step 3 - exceptions
-        roads[68] = new Road((byte)0, (byte)29, gameScreen);
-        roads[69] = new Road((byte)30, (byte)47, gameScreen);
-        roads[70] = new Road((byte)48, (byte)53, gameScreen);
-        roads[71] = new Road((byte)27, (byte)46, gameScreen);
+        roads[68] = new Road((byte)68, (byte)0, (byte)29, gameScreen);
+        roads[69] = new Road((byte)69, (byte)30, (byte)47, gameScreen);
+        roads[70] = new Road((byte)70, (byte)48, (byte)53, gameScreen);
+        roads[71] = new Road((byte)71, (byte)27, (byte)46, gameScreen);
 
         for (Road r: roads){
             //Calculate the average coordinates for every road
@@ -115,4 +116,75 @@ public class BuildMap {
 
     }
 
+    /**
+     * Checks the roads coming out of a specified node and determines whether a road has been built linking to this node. Used to make sure that during setup the player places their road at the last settlement they've placed.
+     * @param nodeNo the node to be checked
+     * @return true if there are no roads around this node, false otherwise
+     */
+    private boolean checkForRoadsAroundNode(byte nodeNo){
+        //Find the roads coming out of node nodeNo
+        //Check if theres anything there
+        byte[] roadsToBeChecked = new byte[3];
+        int i = -1;
+        for (Road r:roads) {
+            if(r.getStartNode() == nodeNo || r.getEndNode() == nodeNo){
+                i++;
+                roadsToBeChecked[i] = r.getRoadNo();
+            }
+        }
+        for (;i >=0; i--) {
+            if(roads[roadsToBeChecked[i]].getBuildState()>0){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Method used for checking that the selected road can be legally built
+     * @param roadNo number corresponding to the road that was pressed
+     * @param playerNo player attempting to place the road
+     * @return true if the road can be built, false otherwise
+     */
+    public boolean canRoadBeBuilt(byte roadNo, byte playerNo) {
+        byte A, B;
+        A = roads[roadNo].getStartNode();
+        B = roads[roadNo].getEndNode();
+        if (CatanGameScreen.turnNo < 3) {   //If the game is still in setup the rules allow for roads to be built without linking onto other roads but settlements instead
+            //Check nodes
+            if (nodes[A].getBuildState() > 0 && nodes[A].getPlayer() == playerNo) {
+                //Start node has a building owned by player, so can be built
+                //Check that a road hasn't been built on this node
+                return checkForRoadsAroundNode(A);
+            }
+            if (nodes[B].getBuildState() > 0 && nodes[B].getPlayer() == playerNo) {
+                //End node has a building owned by player, so can be built
+                //Check that a road hasn't been built on this node
+                return checkForRoadsAroundNode(B);
+            }
+        } else {                  //During a normal turn roads must simply connect to another road
+            byte[] roadsToBeChecked = new byte[4];
+            int i = 0;
+            for (Road r : roads) {
+                if ((r.checkForNode(A)) ^ (r.checkForNode(B))) { //Using XOR to make sure the road we are testing for isn't included
+                    roadsToBeChecked[i] = r.getRoadNo();
+                    i++;
+                }
+            }
+            //iterate through the array of roadsToBeChecked to see if one of them corresponds to a player owned road
+            for (int j = 0; j < i; j++) {
+                //if one of these is player owned, the road can be built
+                if (roads[roadsToBeChecked[j]].getBuildState() > 0 && roads[roadsToBeChecked[j]].getPlayer() == playerNo) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    //For settlements check that the nodes surrounding haven't been built.
+        //Find roads linked to this node
+        //Find list of the 2/3 nodes linked
+        //Check build state
+    
 }
