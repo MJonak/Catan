@@ -9,10 +9,11 @@ public class Node extends ClickableObject{
     //Used to represent the vertices of the BuildMap graph
     //Stores the build state of the node and the associated player number
 
-    private byte buildState, player;
+    private byte nodeNo, buildState, player;
 
-    Node(GameScreen gameScreen){
+    Node(byte id, GameScreen gameScreen){
         super(0, 0, 40, 40, null,  gameScreen);
+        this.nodeNo = id;
         buildState = 0;
         player = 0;
     }
@@ -55,9 +56,12 @@ public class Node extends ClickableObject{
     @Override
     void updateTriggerActions(TouchEvent touchEvent, Vector2 touchLocation){
         if (this.buildState == 0){
-            this.buildSettlement(CatanGameScreen.getCurrentPlayer().getPlayerNo());
-            this.setBitmap(mGameScreen.getGame().getAssetManager().getBitmap("Node" + player));
-            if(CatanGameScreen.UIMode == 10)CatanGameScreen.UIMode++;else CatanGameScreen.UIMode = 0;
+            if(CatanGameScreen.BM.canSettlementBeBuilt(this.nodeNo)) {
+                this.buildSettlement(CatanGameScreen.getCurrentPlayer().getPlayerNo());
+                this.setBitmap(mGameScreen.getGame().getAssetManager().getBitmap("Node" + player));
+                if (CatanGameScreen.UIMode == 10) CatanGameScreen.UIMode++;
+                else CatanGameScreen.UIMode = 0;
+            }
         }
         //TODO add building towns
 

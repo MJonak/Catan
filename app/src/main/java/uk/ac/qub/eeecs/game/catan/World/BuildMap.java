@@ -31,7 +31,7 @@ public class BuildMap {
     public BuildMap(HexMap HM, GameScreen gameScreen){
         //Populate array of nodes
         for (byte i = 0;i<54;i++){
-            nodes[i] = new Node(gameScreen);
+            nodes[i] = new Node(i, gameScreen);
         }
         String Processed = ",";
 
@@ -186,5 +186,25 @@ public class BuildMap {
         //Find roads linked to this node
         //Find list of the 2/3 nodes linked
         //Check build state
-    
+    boolean canSettlementBeBuilt(byte nodeNo){
+        //Find nodes surrounding nodeNo
+        byte[] nodesToBeChecked = new byte[3];
+        int i = -1;
+        for (Road r:roads) {
+            if(r.getStartNode() == nodeNo){
+                i++;
+                nodesToBeChecked[i] = r.getEndNode();
+            }else if(r.getEndNode() == nodeNo){
+                i++;
+                nodesToBeChecked[i] = r.getStartNode();
+            }
+        }
+        //Check if any of those nodes are occupied
+        for (; i >= 0; i--) {
+            if(nodes[nodesToBeChecked[i]].getBuildState() > 0){
+                return false;
+            }
+        }
+        return true;
+    }
 }
