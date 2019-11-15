@@ -7,17 +7,12 @@ import android.graphics.Typeface;
 import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
-import uk.ac.qub.eeecs.gage.engine.input.Input;
-import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
-import uk.ac.qub.eeecs.gage.util.BoundingBox;
-import uk.ac.qub.eeecs.gage.util.Vector2;
 import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.game.catan.World.BuildMap;
-import uk.ac.qub.eeecs.game.catan.World.ClickableObject;
 import uk.ac.qub.eeecs.game.catan.World.Hex;
 import uk.ac.qub.eeecs.game.catan.World.HexMap;
 import uk.ac.qub.eeecs.game.catan.World.Node;
@@ -26,13 +21,13 @@ import uk.ac.qub.eeecs.game.catan.World.Road;
 public class CatanGameScreen extends GameScreen {
 
     //Game properties
-    private byte diceRoll;
+    private int diceRoll;
     private boolean diceRolledThisTurn;
     public static short turnNo;
-    private static byte currentPlayer;
-    public static byte UIMode = 0; //0 - default view; 1 - buildUI; //TODO made the UIMode static to allow resetting the ui back to default after a touch event occurs on a node/road, could change back if better option is found
-    private static byte buildMode; //buildMode 0 - nothing; 1 - settlement ; 2 - city ; 3 - road
-    private static byte NoOfPlayers = 2;
+    private static int currentPlayer;
+    public static int UIMode = 0; //0 - default view; 1 - buildUI; //TODO made the UIMode static to allow resetting the ui back to default after a touch event occurs on a node/road, could change back if better option is found
+    private static int buildMode; //buildMode 0 - nothing; 1 - settlement ; 2 - city ; 3 - road
+    private static int NoOfPlayers = 2;
     private static Player[] PlayerList = new Player[NoOfPlayers];
     //Board Elements
     private HexMap HM;
@@ -101,7 +96,7 @@ public class CatanGameScreen extends GameScreen {
         diceRolledThisTurn = false;
         buildMode = 1;
         UIMode = 10; //Meaning first stage of setup
-        for (byte i = 0; i<NoOfPlayers;i++){
+        for (int i = 0; i<NoOfPlayers;i++){
             PlayerList[i] = new Player(i);
         }
 
@@ -164,8 +159,8 @@ public class CatanGameScreen extends GameScreen {
             //Update the correct buttons & implement functionality
             switch (UIMode) {
                 case 0://Update the default UI
-                    for (int i = 0; i < defaultUI.length; i++) {
-                        defaultUI[i].update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+                    for (PushButton pushButton1 : defaultUI) {
+                        pushButton1.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
                     }
                     if (btnBuild.isPushTriggered()) {
                         //Open build UI
@@ -174,17 +169,17 @@ public class CatanGameScreen extends GameScreen {
                     }
                     break;
                 case 1://Update the buildUI
-                    for (int i = 0; i < buildUI.length; i++) {
-                        buildUI[i].update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+                    for (PushButton pushButton : buildUI) {
+                        pushButton.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
                     }
                     //Implement button functionality
                     if (btnSettlement.isPushTriggered()) {
-                        if (PlayerList[currentPlayer].hasEnoughResourcesFor((byte) 1))
+                        if (PlayerList[currentPlayer].hasEnoughResourcesFor( 1))
                             buildMode = 1;
                         else System.out.println("Not enough resources!");
                     }
                     if (btnRoad.isPushTriggered()) {
-                        if (PlayerList[currentPlayer].hasEnoughResourcesFor((byte) 3)) {
+                        if (PlayerList[currentPlayer].hasEnoughResourcesFor( 3)) {
                             buildMode = 3;
                         } else {
                             System.out.println("Not enough resources!");
@@ -223,14 +218,19 @@ public class CatanGameScreen extends GameScreen {
 
             //Rolling dice
             if (btnRoll.isPushTriggered()) {
-                //Roll the dice
-                //Using 3 byte casts as the inner two are required to round the doubles before adding (to prevent 13/14 from being reached in the event of both random() calls returning the max value of 1.0)
+                //Roll the dice  //TODO REVIEW THIS AFTER CHANGING EVERY int TO INT
+                //Using 3 int casts as the inner two are required to round the doubles before adding (to prevent 13/14 from being reached in the event of both random() calls returning the max value of 1.0)
                 //And the outer cast is due to 2 bytes making an int apparently, even though the maximum possible value this function could be before the cast is 12
-                diceRoll = (byte) ((byte) (Math.random() * 6 + 1) + (byte) (Math.random() * 6 + 1));
+                diceRoll =  ((int)(Math.random() * 5 + 1)+(int)(Math.random() * 5 + 1));
+                for (int i = 0; i<100; i++)
+                {
+                    System.out.print((Math.round(Math.random()*5 + 1) + Math.round(Math.random()*5+1)) + " ");
+                    if(i%10 == 0) System.out.println();
+                }
                 //Give out resources
                 for (Hex h : HM.Hexes) {
                     if (h.getDiceNo() == diceRoll) {                         //Found a hex with the matching # token
-                        for (byte i = 0; i < 6; i++) {                      //Iterate through the nodes
+                        for (int i = 0; i < 6; i++) {                      //Iterate through the nodes
                             if (BM.nodes[h.getNode(i)].getBuildState() != 0) {  //Found a node on this hex which has a building
                                 // Give the Player who owns the building the resource(s)
                                 PlayerList[BM.nodes[h.getNode(i)].getPlayer()].addResource(h.getResource(), BM.nodes[h.getNode(i)].getBuildState());
@@ -249,7 +249,7 @@ public class CatanGameScreen extends GameScreen {
                 UIMode = 0;
                 endTurn();
 
-                System.out.println("Plyr#: " + currentPlayer + "|" + PlayerList[currentPlayer].getResource((byte) 0) + "-Brick " + PlayerList[currentPlayer].getResource((byte) 1) + "-Wool " + PlayerList[currentPlayer].getResource((byte) 2) + "-Ore " + PlayerList[currentPlayer].getResource((byte) 3) + "-Grain " + PlayerList[currentPlayer].getResource((byte) 4) + "-Wood" + "|| VP:" + PlayerList[currentPlayer].getVictoryPoints());
+                System.out.println("Plyr#: " + currentPlayer + "|" + PlayerList[currentPlayer].getResource( 0) + "-Brick " + PlayerList[currentPlayer].getResource( 1) + "-Wool " + PlayerList[currentPlayer].getResource( 2) + "-Ore " + PlayerList[currentPlayer].getResource( 3) + "-Grain " + PlayerList[currentPlayer].getResource( 4) + "-Wood" + "|| VP:" + PlayerList[currentPlayer].getVictoryPoints());
             }
 /*Setup*/} else {
             switch(UIMode){
@@ -266,9 +266,9 @@ public class CatanGameScreen extends GameScreen {
                         if(turnNo==2 && currentPlayer==NoOfPlayers-1){
                             UIMode = 0;
                             for (Hex h: HM.Hexes) {
-                                for (byte n = 0; n < 6; n++) {
+                                for (int n = 0; n < 6; n++) {
                                     if(BM.nodes[h.getNode(n)].getBuildState()==1){
-                                        PlayerList[BM.nodes[h.getNode(n)].getPlayer()].addResource(h.getResource(), (byte)1);
+                                        PlayerList[BM.nodes[h.getNode(n)].getPlayer()].addResource(h.getResource(), 1);
                                     }
                                 }
                             }
@@ -332,13 +332,13 @@ public class CatanGameScreen extends GameScreen {
         //Draw the UI elements
         switch (UIMode){
             case 0://Draw the default UI
-                for (int i = 0; i < defaultUI.length; i++) {
-                    defaultUI[i].draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
+                for (PushButton pushButton1 : defaultUI) {
+                    pushButton1.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
                 }
                 break;
             case 1://Draw the buildUI
-                for (int i = 0; i < buildUI.length; i++) {
-                    buildUI[i].draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
+                for (PushButton pushButton : buildUI) {
+                    pushButton.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
                 }
                 break;
                             //SETUP PHASE
@@ -370,7 +370,7 @@ public class CatanGameScreen extends GameScreen {
             graphics2D.drawText("  | Br| Wl| Or| Gr| Wd|| VP|", mGameScreenViewport.width*0.70f, pos, paint);
             for (Player p:PlayerList) {
                 pos+=25;
-                graphics2D.drawText(String.format("%1$s | %2$s | %3$d | %4$d | %5$d | %6$d || %7$d", p.getPlayerNo(), p.getResource((byte)0), p.getResource((byte)1), p.getResource((byte)2), p.getResource((byte)3), p.getResource((byte)4), p.getVictoryPoints()  ), mGameScreenViewport.width*0.70f, pos, paint);
+                graphics2D.drawText(String.format("%1$s | %2$s | %3$d | %4$d | %5$d | %6$d || %7$d", p.getPlayerNo(), p.getResource(0), p.getResource(1), p.getResource(2), p.getResource(3), p.getResource(4), p.getVictoryPoints()  ), mGameScreenViewport.width*0.70f, pos, paint);
             }
         }
     }

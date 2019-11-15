@@ -11,7 +11,7 @@ import uk.ac.qub.eeecs.game.catan.World.HexMap;
 
 public class CatanInstructionsScreen extends GameScreen {
 
-    protected CatanInstructionsScreen(Game game){
+    public CatanInstructionsScreen(Game game){
         super("CatanInstructionsScreen", game);
         HexMap hm = new HexMap(this);
     }

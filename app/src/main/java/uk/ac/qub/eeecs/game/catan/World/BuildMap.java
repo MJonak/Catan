@@ -30,14 +30,14 @@ public class BuildMap {
     //CONSTRUCTOR
     public BuildMap(HexMap HM, GameScreen gameScreen){
         //Populate array of nodes
-        for (byte i = 0;i<54;i++){
+        for (int i = 0;i<54;i++){
             nodes[i] = new Node(i, gameScreen);
         }
         String Processed = ",";
 
         //Vertices of the hexes 0-11 & 18 make up all of the nodes on the map, so hexes 12-17 do not need to be processed.
-        for (byte h = 0; h < 19; h++) {
-            for (byte n = 0; n <6; n++){
+        for (int h = 0; h < 19; h++) {
+            for (int n = 0; n <6; n++){
                 if (!Processed.contains("," + HM.Hexes[h].getNode(n) + ",")){
                     switch(n) {
                         case 0:
@@ -73,30 +73,30 @@ public class BuildMap {
         //The roads are generated as efficiently as possible
         //Create the roads
         //Step 1 - sequentially from 0-53
-        for(byte i = 0; i <53; i++){
-            roads[i] = new Road(i, i, (byte)(i+1), gameScreen);
+        for(int i = 0; i <53; i++){
+            roads[i] = new Road(i, i, (i+1), gameScreen);
         }
 
         //Step 2 - roads linking in and out of hexes 12-17 outer edge (check map diagram)
-        byte a = 0; // Used to correct the difference between the node numbers as it decreases
-        for (byte i = 31;i<45;i+=3){
-            roads[i+22] = new Road((byte)(i+22),(byte)(i-29+a), i, gameScreen);
-            roads[i+23] = new Road((byte)(i+23),(byte)(i+1), (byte)(i+18-a), gameScreen);
-            roads[i+24] = new Road((byte)(i+24),(byte)(i-27+a), (byte)(i+2), gameScreen);
+        int a = 0; // Used to correct the difference between the node numbers as it decreases
+        for (int i = 31;i<45;i+=3){
+            roads[i+22] = new Road((i+22),(i-29+a), i, gameScreen);
+            roads[i+23] = new Road((i+23),(i+1), (i+18-a), gameScreen);
+            roads[i+24] = new Road((i+24),(i-27+a), (i+2), gameScreen);
             a+=2;
         }
         //Step 3 - exceptions
-        roads[68] = new Road((byte)68, (byte)0, (byte)29, gameScreen);
-        roads[69] = new Road((byte)69, (byte)30, (byte)47, gameScreen);
-        roads[70] = new Road((byte)70, (byte)48, (byte)53, gameScreen);
-        roads[71] = new Road((byte)71, (byte)27, (byte)46, gameScreen);
+        roads[68] = new Road(68, 0, 29, gameScreen);
+        roads[69] = new Road(69, 30, 47, gameScreen);
+        roads[70] = new Road(70, 48, 53, gameScreen);
+        roads[71] = new Road(71, 27, 46, gameScreen);
 
         for (Road r: roads){
             //Calculate the average coordinates for every road
             r.setPosition(((nodes[r.getStartNode()].position.x + nodes[r.getEndNode()].position.x)/2) , ((nodes[r.getStartNode()].position.y + nodes[r.getEndNode()].position.y)/2));
 
             if (nodes[r.getStartNode()].position.x == nodes[r.getEndNode()].position.x){
-                r.setRoadType((byte)23); //Use Road23
+                r.setRoadType(23); //Use Road23
                 r.setHeight(100f);
                 r.setWidth(20f);
                 continue;
@@ -104,12 +104,12 @@ public class BuildMap {
 
             //Very long condition which just checks the difference between the start & end nodes x&y
             if(((nodes[r.getStartNode()].position.x - nodes[r.getEndNode()].position.x) < 0 && (nodes[r.getStartNode()].position.y - nodes[r.getEndNode()].position.y) < 0) || ((nodes[r.getStartNode()].position.x - nodes[r.getEndNode()].position.x) > 0 && (nodes[r.getStartNode()].position.y - nodes[r.getEndNode()].position.y) > 0)) {
-                r.setRoadType((byte)34); //Use Road34
+                r.setRoadType(34); //Use Road34
                 continue;
             }
 
             //if we've reached this part of the loop there's only one other option
-            r.setRoadType((byte)12); //Use Road12
+            r.setRoadType(12); //Use Road12
 
 
         }
@@ -121,10 +121,10 @@ public class BuildMap {
      * @param nodeNo the node to be checked
      * @return true if there are no roads around this node, false otherwise
      */
-    private boolean checkForRoadsAroundNode(byte nodeNo){
+    private boolean checkForRoadsAroundNode(int nodeNo){
         //Find the roads coming out of node nodeNo
         //Check if theres anything there
-        byte[] roadsToBeChecked = new byte[3];
+        int[] roadsToBeChecked = new int[3];
         int i = -1;
         for (Road r:roads) {
             if(r.getStartNode() == nodeNo || r.getEndNode() == nodeNo){
@@ -146,8 +146,8 @@ public class BuildMap {
      * @param playerNo player attempting to place the road
      * @return true if the road can be built, false otherwise
      */
-    public boolean canRoadBeBuilt(byte roadNo, byte playerNo) {
-        byte A, B;
+    boolean canRoadBeBuilt(int roadNo, int playerNo) {
+        int A, B;
         A = roads[roadNo].getStartNode();
         B = roads[roadNo].getEndNode();
         if (CatanGameScreen.turnNo < 3) {   //If the game is still in setup the rules allow for roads to be built without linking onto other roads but settlements instead
@@ -163,7 +163,7 @@ public class BuildMap {
                 return checkForRoadsAroundNode(B);
             }
         } else {                  //During a normal turn roads must simply connect to another road
-            byte[] roadsToBeChecked = new byte[4];
+            int[] roadsToBeChecked = new int[4];
             int i = 0;
             for (Road r : roads) {
                 if ((r.checkForNode(A)) ^ (r.checkForNode(B))) { //Using XOR to make sure the road we are testing for isn't included
@@ -186,9 +186,9 @@ public class BuildMap {
         //Find roads linked to this node
         //Find list of the 2/3 nodes linked
         //Check build state
-    boolean canSettlementBeBuilt(byte nodeNo){
+    boolean canSettlementBeBuilt(int nodeNo){
         //Find nodes surrounding nodeNo
-        byte[] nodesToBeChecked = new byte[3];
+        int[] nodesToBeChecked = new int[3];
         int i = -1;
         for (Road r:roads) {
             if(r.getStartNode() == nodeNo){

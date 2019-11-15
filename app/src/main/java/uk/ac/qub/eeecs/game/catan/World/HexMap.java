@@ -13,35 +13,35 @@ public class HexMap {
         // 4, 1, 3, 1, 3, 2, 4, 3, 2, 0, 5, 0; 2, 0, 4, 1, 1, 4, 3
     // and the list of dice rolls
         //11, 12, 9, 10, 8, 3, 6, 2, 5, 8, {0} , 4, 6, 5, 4, 9, 10, 3, 11
-    final byte NoOfHexes = 19;
+    final private int NoOfHexes = 19;
     final float XCos30 = 87f; //(float)(100*Math.cos((30*Math.PI)/180));
     final float X = 100f;
     public Hex[] Hexes = new Hex[NoOfHexes];
 
     public HexMap(GameScreen gameScreen){
-        byte[] resArr = new byte[]{4, 1, 3, 1, 3, 2, 4, 3, 2, 0, 5, 0, 2, 0, 4, 1, 1, 4, 3};
-        byte[] diceArr = new byte[]{11, 12, 9, 10, 8, 3, 6, 2, 5, 8, 0, 4, 6, 5, 4, 9, 10, 3, 11};
+        int[] resArr = new int[]{4, 1, 3, 1, 3, 2, 4, 3, 2, 0, 5, 0, 2, 0, 4, 1, 1, 4, 3};
+        int[] diceArr = new int[]{11, 12, 9, 10, 8, 3, 6, 2, 5, 8, 0, 4, 6, 5, 4, 9, 10, 3, 11};
         //Tried generating the numbers, however they need to be stored in the correct node field in the Hex object making it far far harder.
 
-        Hexes[0] = new Hex(resArr[0], diceArr[0], (byte)0, (byte)1, (byte)2, (byte)31, (byte)30, (byte)29, gameScreen);
-        Hexes[1] = new Hex(resArr[1], diceArr[1], (byte)2, (byte)3, (byte)4, (byte)33, (byte)32, (byte)31, gameScreen);
-        Hexes[2] = new Hex(resArr[2], diceArr[2], (byte)4, (byte)5, (byte)6, (byte)7, (byte)34, (byte)33, gameScreen);
-        Hexes[3] = new Hex(resArr[3], diceArr[3], (byte)34, (byte)7, (byte)8, (byte)9, (byte)36, (byte)35, gameScreen);
-        Hexes[4] = new Hex(resArr[4], diceArr[4], (byte)36, (byte)9, (byte)10, (byte)11, (byte)12, (byte)37, gameScreen);
-        Hexes[5] = new Hex(resArr[5], diceArr[5], (byte)38, (byte)37, (byte)12, (byte)13, (byte)14, (byte)39, gameScreen);
-        Hexes[6] = new Hex(resArr[6], diceArr[6], (byte)40, (byte)39, (byte)14, (byte)15, (byte)16, (byte)17, gameScreen);
-        Hexes[7] = new Hex(resArr[7], diceArr[7], (byte)42, (byte)41, (byte)40, (byte)17, (byte)18, (byte)19, gameScreen);
-        Hexes[8] = new Hex(resArr[8], diceArr[8], (byte)22, (byte)43, (byte)42, (byte)19, (byte)20, (byte)21, gameScreen);
-        Hexes[9] = new Hex(resArr[9], diceArr[9], (byte)24, (byte)45, (byte)44, (byte)43, (byte)22, (byte)23, gameScreen);
-        Hexes[10] = new Hex(resArr[10], diceArr[10], (byte)26, (byte)27, (byte)46, (byte)45, (byte)24, (byte)25, gameScreen);
-        Hexes[11] = new Hex(resArr[11], diceArr[11], (byte)28, (byte)29, (byte)30, (byte)47, (byte)46, (byte)27, gameScreen);
-        Hexes[12] = new Hex(resArr[12], diceArr[12], (byte)30, (byte)31, (byte)32, (byte)49, (byte)48, (byte)47, gameScreen);
-        Hexes[13] = new Hex(resArr[13], diceArr[13], (byte)32, (byte)33, (byte)34, (byte)35, (byte)50, (byte)49, gameScreen);
-        Hexes[14] = new Hex(resArr[14], diceArr[14], (byte)50, (byte)35, (byte)36, (byte)37, (byte)38, (byte)51, gameScreen);
-        Hexes[15] = new Hex(resArr[15], diceArr[15], (byte)52, (byte)51, (byte)38, (byte)39, (byte)40, (byte)41, gameScreen);
-        Hexes[16] = new Hex(resArr[16], diceArr[16], (byte)44, (byte)53, (byte)52, (byte)41, (byte)42, (byte)43, gameScreen);
-        Hexes[17] = new Hex(resArr[17], diceArr[17], (byte)46, (byte)47, (byte)48, (byte)53, (byte)44, (byte)45, gameScreen);
-        Hexes[18] = new Hex(resArr[18], diceArr[18], (byte)48, (byte)49, (byte)50, (byte)51, (byte)52, (byte)53, gameScreen);
+        Hexes[0] = new Hex(resArr[0], diceArr[0], 0, 1, 2, 31, 30, 29, gameScreen);
+        Hexes[1] = new Hex(resArr[1], diceArr[1], 2, 3, 4, 33, 32, 31, gameScreen);
+        Hexes[2] = new Hex(resArr[2], diceArr[2], 4, 5, 6, 7, 34, 33, gameScreen);
+        Hexes[3] = new Hex(resArr[3], diceArr[3], 34, 7, 8, 9, 36, 35, gameScreen);
+        Hexes[4] = new Hex(resArr[4], diceArr[4], 36, 9, 10, 11, 12, 37, gameScreen);
+        Hexes[5] = new Hex(resArr[5], diceArr[5], 38, 37, 12, 13, 14, 39, gameScreen);
+        Hexes[6] = new Hex(resArr[6], diceArr[6], 40, 39, 14, 15, 16, 17, gameScreen);
+        Hexes[7] = new Hex(resArr[7], diceArr[7], 42, 41, 40, 17, 18, 19, gameScreen);
+        Hexes[8] = new Hex(resArr[8], diceArr[8], 22, 43, 42, 19, 20, 21, gameScreen);
+        Hexes[9] = new Hex(resArr[9], diceArr[9], 24, 45, 44, 43, 22, 23, gameScreen);
+        Hexes[10] = new Hex(resArr[10], diceArr[10], 26, 27, 46, 45, 24, 25, gameScreen);
+        Hexes[11] = new Hex(resArr[11], diceArr[11], 28, 29, 30, 47, 46, 27, gameScreen);
+        Hexes[12] = new Hex(resArr[12], diceArr[12], 30, 31, 32, 49, 48, 47, gameScreen);
+        Hexes[13] = new Hex(resArr[13], diceArr[13], 32, 33, 34, 35, 50, 49, gameScreen);
+        Hexes[14] = new Hex(resArr[14], diceArr[14], 50, 35, 36, 37, 38, 51, gameScreen);
+        Hexes[15] = new Hex(resArr[15], diceArr[15], 52, 51, 38, 39, 40, 41, gameScreen);
+        Hexes[16] = new Hex(resArr[16], diceArr[16], 44, 53, 52, 41, 42, 43, gameScreen);
+        Hexes[17] = new Hex(resArr[17], diceArr[17], 46, 47, 48, 53, 44, 45, gameScreen);
+        Hexes[18] = new Hex(resArr[18], diceArr[18], 48, 49, 50, 51, 52, 53, gameScreen);
 
 
         //SETTING CENTERPOINTS
@@ -102,7 +102,7 @@ public class HexMap {
         //TESTING  V V V V V V V V V V V
 
         for (int i = 0; i<NoOfHexes; i++){
-            for (byte j = 0; j<6; j++) {
+            for (int j = 0; j<6; j++) {
                 System.out.print(Hexes[i].getNode(j) + " ");
             }
             System.out.println("|");

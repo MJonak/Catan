@@ -1,12 +1,12 @@
 package uk.ac.qub.eeecs.game.catan;
 
 public class Player {
-    private final byte playerNo;
-    private byte victoryPoints;
+    private final int playerNo;
+    private int victoryPoints;
     private byte[] resources = new byte[]{4, 2, 0, 2, 4}; //0 is brick, 1 is wool, 2 is ore, 3 is  grain, 4 is wood || Starting off with this array to allow players to build initial settlements & roads
     //Dev cards
     //trading
-    public Player(byte playerNumber){
+    public Player(int playerNumber){
         this.playerNo = playerNumber;
         victoryPoints = 0;
 
@@ -15,24 +15,24 @@ public class Player {
     /**
      * Adds the specified quantity of the corresponding resource to the players inventory.
      * @param resourceNo Resource number stored in relevant hex
-     * @param quantity Quantity given, based off of number of settlements/cities on relevant hexes
+     * @param quantity quantity given, this number is equal to the buildState of the relevant node
      */
-    public void addResource(byte resourceNo, byte quantity){ if(resourceNo<5){this.resources[resourceNo] += quantity;}}
+    public void addResource(int resourceNo, int quantity){ if(resourceNo<5){this.resources[resourceNo] += quantity;}}
 
     /**
      * Removes the specified quantity of the corresponding resource from the players inventory
      * @param resourceNo Corresponding Resource number: 0 is brick, 1 is wool, 2 is ore, 3 is  grain, 4 is wood
      * @param quantity Quantity removed
      */
-    public void removeResource(byte resourceNo, byte quantity){this.resources[resourceNo] -= quantity;}
+    public void removeResource(int resourceNo, int quantity){this.resources[resourceNo] -= quantity;}
 
 
-    /**
+    /**int
      * Checks if the player has sufficient resources to build a building of the specified type
      * @param buildingType number corresponding to the building to be built, 1 is a settlement, 2 is a city, 3 is a road
-     * @return
+     * @return true if the player has enough resources to build the specified building, false otherwise
      */
-    public boolean hasEnoughResourcesFor(byte buildingType){
+    public boolean hasEnoughResourcesFor(int buildingType){
         switch(buildingType){
             case 1:
                 if(resources[0]>0 && resources[1]>0 && resources[3]>0 && resources[4]>0)return true;
@@ -51,7 +51,7 @@ public class Player {
      * Deduct the resources required to build the specified building
      * @param buildingType number corresponding to the building to be built, 1 is a settlement, 2 is a city, 3 is a road
      */
-    public void removeResourcesFor(byte buildingType){
+    public void removeResourcesFor(int buildingType){
         switch(buildingType){
             case 1:
                 resources[0]-=1; resources[1]-=1; resources[3]-=1; resources[4]-=1;
@@ -68,28 +68,28 @@ public class Player {
      * Add victory points to the players running total. Call this method when the player should be awarded victory points
      * @param quantity Number of victory points to be awarded
      */
-    public void addVictoryPoints(byte quantity){this.victoryPoints += quantity;}
+    public void addVictoryPoints(int quantity){this.victoryPoints += quantity;}
 
     /**
      * Return player number
      * @return This player's player number
      */
-    public byte getPlayerNo(){return this.playerNo;}
+    public int getPlayerNo(){return this.playerNo;}
 
     /**
      * Returns the player's current victory point total
      * @return This player's victory point total
      */
-    public byte getVictoryPoints(){return this.victoryPoints;}
+    public int getVictoryPoints(){return this.victoryPoints;}
 
     /**
      * Counts the player's total number of resource cards. If a 7 is rolled and this player's resource card total exceeds 7 they must discard half of their cards (rounded down).
      * @return This player's total number of resources
      */
-    public byte getNoOfResources(){
-        byte sum = 0;
-        for (int i = 0; i<resources.length; i++){
-            sum += resources[i];
+    public int getNoOfResources(){
+        int sum = 0;
+        for (byte resource : resources) {
+            sum += resource;
         }
         return sum;
     }
@@ -99,6 +99,6 @@ public class Player {
      * @param resourceNo Corresponding Resource number: 0 is brick, 1 is wool, 2 is ore, 3 is  grain, 4 is wood
      * @return the amount of resource the player has
      */
-    public byte getResource(byte resourceNo){return this.resources[resourceNo];}
+    public int getResource(int resourceNo){return this.resources[resourceNo];}
 
 }

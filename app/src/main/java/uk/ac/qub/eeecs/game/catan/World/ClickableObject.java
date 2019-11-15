@@ -19,14 +19,14 @@ public class ClickableObject extends GameObject {
 
     public boolean mIsTouched;
 
-    public Vector2 mTouchLocation = new Vector2();
+    private Vector2 mTouchLocation = new Vector2();
 
-    protected ClickableObject(float x, float y, float width, float height,
-                           Bitmap bitmap, GameScreen gameScreen){
+    ClickableObject(float x, float y, float width, float height,
+                    Bitmap bitmap, GameScreen gameScreen){
         super(x, y, width, height, bitmap, gameScreen);
     }
 
-    public void getTouchLocation(Vector2 touchLocation, float x, float y,
+    private void getTouchLocation(Vector2 touchLocation, float x, float y,
                                   LayerViewport layerViewport,
                                   ScreenViewport screenViewport) {
             // Convert and store the touch location

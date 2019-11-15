@@ -9,9 +9,9 @@ public class Node extends ClickableObject{
     //Used to represent the vertices of the BuildMap graph
     //Stores the build state of the node and the associated player number
 
-    private byte nodeNo, buildState, player;
+    private int nodeNo, buildState, player;
 
-    Node(byte id, GameScreen gameScreen){
+    Node(int id, GameScreen gameScreen){
         super(0, 0, 40, 40, null,  gameScreen);
         this.nodeNo = id;
         buildState = 0;
@@ -22,23 +22,23 @@ public class Node extends ClickableObject{
      * Returns the current build state of this node
      * @return 0 - empty ; 1 - settlement ; 2 - town
      */
-    public byte getBuildState(){return this.buildState;}
+    public int getBuildState(){return this.buildState;}
 
     /**
      * Returns the player number associated with this node
      * @return Corresponding player number if something has been built, 0 otherwise
      */
-    public byte getPlayer(){return this.player;}
+    public int getPlayer(){return this.player;}
 
     /**
      * Marks that this node now contains a settlement belonging to the player correspdoing to playerNo
      * @param playerNo corresponding player's player number
      */
-    public void buildSettlement(byte playerNo){
+    private void buildSettlement(int playerNo){
         buildState = 1;
         player = playerNo;
-        CatanGameScreen.getCurrentPlayer().removeResourcesFor((byte)1);
-        CatanGameScreen.getCurrentPlayer().addVictoryPoints((byte)1);
+        CatanGameScreen.getCurrentPlayer().removeResourcesFor(1);
+        CatanGameScreen.getCurrentPlayer().addVictoryPoints(1);
     }
 
     /**
@@ -47,8 +47,8 @@ public class Node extends ClickableObject{
      */
     public void buildTown() {
         buildState = 2;
-        CatanGameScreen.getCurrentPlayer().removeResourcesFor((byte)2);
-        CatanGameScreen.getCurrentPlayer().addVictoryPoints((byte)1);
+        CatanGameScreen.getCurrentPlayer().removeResourcesFor(2);
+        CatanGameScreen.getCurrentPlayer().addVictoryPoints(1);
     }
 
 

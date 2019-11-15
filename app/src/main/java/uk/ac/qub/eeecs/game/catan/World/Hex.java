@@ -22,29 +22,20 @@ public class Hex extends ClickableObject{
     // builds a settlement on one of the port nodes (certain nodes between 0-29)
 
     //PROPERTIES
-    private byte resource;
-    private byte diceNo;
+    private int resource;
+    private int diceNo;
     private boolean robber;
-    private byte[] Nodes = new byte[6];
+    private int[] Nodes = new int[6];
 
     //CONSTRUCTOR - Uses node0-node5 for the time being as i just want to hardcode the nodes to each hex atm, ill clean this up later
     //TODO clean this up later
-    protected Hex(byte res, byte dice, byte node0, byte node1, byte node2, byte node3, byte node4, byte node5, GameScreen gameScreen){
+    Hex(int res, int dice, int node0, int node1, int node2, int node3, int node4, int node5, GameScreen gameScreen){
         super(0, 0, 174f, 200f, null, gameScreen);
         this.resource = res;
         this.diceNo = dice;
         this.Nodes[0] = node0;this.Nodes[1] = node1;this.Nodes[2] = node2;this.Nodes[3] = node3;this.Nodes[4] = node4;this.Nodes[5] = node5;
         robber = false;
     }
-    protected Hex(byte res, byte dice, byte[] nodes, GameScreen gameScreen){
-        super(0, 0, 174f, 200f, null, gameScreen);
-        this.resource = res;
-        this.diceNo = dice;
-        for (int i = 0;i<6;i++){
-            this.Nodes[i] = nodes[i];
-        }
-    }
-
 
         //METHODS
 
@@ -58,20 +49,20 @@ public class Hex extends ClickableObject{
      * Returns the dice number corresponding to this hex
      * @return The dice number
      */
-    public byte getDiceNo(){return this.diceNo;}
+    public int getDiceNo(){return this.diceNo;}
 
     /**
      * Returns the resource corresponding to this hex
      * @return The resource number
      */
-    public byte getResource(){return this.resource;}
+    public int getResource(){return this.resource;}
 
     /**
      * Returns the node index corresponding to the selected node of this hex.
      * @param x Node index within this hex: 0 - Top left ; 1 - Top center ; 2 - Top right ; 3 - Bottom right ; 4 - Bottom center ; 5 - Bottom Left
      * @return Node index within BuildMap Nodes[] array
      */
-    public byte getNode(byte x) {return this.Nodes[x];}
+    public int getNode(int x) {return this.Nodes[x];}
 
     /**
      * Returns the X coordinate of this hex
