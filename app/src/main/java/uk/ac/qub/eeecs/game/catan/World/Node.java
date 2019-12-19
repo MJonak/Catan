@@ -62,9 +62,13 @@ public class Node extends ClickableObject{
                 if (CatanGameScreen.UIMode == 10) CatanGameScreen.UIMode++;
                 else CatanGameScreen.UIMode = 0;
             }
+        } else if(this.buildState == 1 && CatanGameScreen.turnNo>2){
+            if(this.player == CatanGameScreen.getCurrentPlayer().getPlayerNo()) {
+                this.buildTown();
+                this.setBitmap(mGameScreen.getGame().getAssetManager().getBitmap("Town" + player));
+                CatanGameScreen.UIMode = 0;
+            }
         }
-        //TODO add building towns
-
     }
 
 

@@ -26,7 +26,7 @@ public class CatanGameScreen extends GameScreen {
     public static short turnNo;
     private static int currentPlayer;
     public static int UIMode = 0; //0 - default view; 1 - buildUI; //TODO made the UIMode static to allow resetting the ui back to default after a touch event occurs on a node/road, could change back if better option is found
-    private static int buildMode; //buildMode 0 - nothing; 1 - settlement ; 2 - city ; 3 - road
+    private static int buildMode; //buildMode 0 - nothing; 1 - settlement ; 2 - city ; 3 - road  //TODO Buildmode may need to be reworked, only need to know whether to update roads or nodes
     private static int NoOfPlayers = 2;
     private static Player[] PlayerList = new Player[NoOfPlayers];
     //Board Elements
@@ -34,8 +34,8 @@ public class CatanGameScreen extends GameScreen {
     public static BuildMap BM;
     private GameObject[] tokens = new GameObject[19];
     //UI Elements
-    private PushButton btnBuild, btnRoll, btnEndTurn, btnSettlement, btnRoad, btnBack;
-    private PushButton[] buildUI = new PushButton[3];
+    private PushButton btnBuild, btnRoll, btnEndTurn, btnSettlement, btnTown, btnRoad, btnBack;
+    private PushButton[] buildUI = new PushButton[4];
     private PushButton[] defaultUI = new PushButton[1];
     //Viewport Properties
     private final static float WORLD_WIDTH = 1210.0f;
@@ -76,6 +76,7 @@ public class CatanGameScreen extends GameScreen {
         mGame.getAssetManager().loadAndAddBitmap("btnRoll", "img/catan/btnRollDice.png");
         mGame.getAssetManager().loadAndAddBitmap("btnEndTurn", "img/catan/btnEndTurn.png");
         mGame.getAssetManager().loadAndAddBitmap("btnSettlement", "img/catan/btnSettlement.png");
+        mGame.getAssetManager().loadAndAddBitmap("btnTown", "img/catan/btnTown.png");
         mGame.getAssetManager().loadAndAddBitmap("btnRoad", "img/catan/btnRoad.png");
         mGame.getAssetManager().loadAndAddBitmap("btnBack", "img/catan/btnBack.png");
         mGame.getAssetManager().loadAndAddBitmap("token2", "img/catan/token2.png");
@@ -89,6 +90,10 @@ public class CatanGameScreen extends GameScreen {
         mGame.getAssetManager().loadAndAddBitmap("token10", "img/catan/token10.png");
         mGame.getAssetManager().loadAndAddBitmap("token11", "img/catan/token11.png");
         mGame.getAssetManager().loadAndAddBitmap("token12", "img/catan/token12.png");
+        mGame.getAssetManager().loadAndAddBitmap("Town0", "img/catan/TownPH.png");
+        mGame.getAssetManager().loadAndAddBitmap("Town1", "img/catan/TownPH1.png");
+        mGame.getAssetManager().loadAndAddBitmap("Town2", "img/catan/TownPH2.png");
+        mGame.getAssetManager().loadAndAddBitmap("Town3", "img/catan/TownPH3.png");
         HM = new HexMap(this);
         BM = new BuildMap(HM,this);
         currentPlayer = 0;
@@ -98,6 +103,7 @@ public class CatanGameScreen extends GameScreen {
         UIMode = 10; //Meaning first stage of setup
         for (int i = 0; i<NoOfPlayers;i++){
             PlayerList[i] = new Player(i);
+            PlayerList[i].setStartingResources();
         }
 
         //Populate the tokens array with a token for each hex - using a fori instead of a foreach loop as i is needed to iterate through the tokens array
@@ -126,9 +132,10 @@ public class CatanGameScreen extends GameScreen {
         btnRoll = new PushButton(screenWidth* 0.1f, screenHeight * 0.9f, screenWidth*0.18f, screenHeight * 0.14f, "btnRoll",  this);
         btnEndTurn = new PushButton(screenWidth* 0.1f, screenHeight * 0.9f, screenWidth*0.18f, screenHeight * 0.14f, "btnEndTurn",  this);
         btnSettlement = new PushButton(screenWidth * 0.1f, screenHeight*0.1f, screenWidth*0.18f, screenHeight*0.14f, "btnSettlement",  this);
+        btnTown = new PushButton(screenWidth * 0.1f, screenHeight*0.5f, screenWidth*0.18f, screenHeight*0.14f, "btnTown",  this);
         btnRoad = new PushButton(screenWidth * 0.1f, screenHeight*0.3f, screenWidth*0.18f, screenHeight*0.14f, "btnRoad",  this);
         btnBack = new PushButton(screenWidth * 0.9f, screenHeight*0.9f, screenWidth*0.08f, screenHeight*0.1f, "btnBack",  this);
-        buildUI[0] = btnSettlement; buildUI[1] = btnRoad; buildUI[2] = btnBack;
+        buildUI[0] = btnSettlement; buildUI[1] = btnRoad; buildUI[2] = btnBack; buildUI[3] = btnTown;
         defaultUI[0] = btnBuild;
     }
 
@@ -185,6 +192,13 @@ public class CatanGameScreen extends GameScreen {
                             System.out.println("Not enough resources!");
                         }
                     }
+                    if(btnTown.isPushTriggered()){
+                        if (PlayerList[currentPlayer].hasEnoughResourcesFor( 2)) {
+                            buildMode = 2;
+                        } else {
+                            System.out.println("Not enough resources!");
+                        }
+                    }
                     if (btnBack.isPushTriggered()) {
                         UIMode = 0;
                     }
@@ -218,15 +232,8 @@ public class CatanGameScreen extends GameScreen {
 
             //Rolling dice
             if (btnRoll.isPushTriggered()) {
-                //Roll the dice  //TODO REVIEW THIS AFTER CHANGING EVERY int TO INT
-                //Using 3 int casts as the inner two are required to round the doubles before adding (to prevent 13/14 from being reached in the event of both random() calls returning the max value of 1.0)
-                //And the outer cast is due to 2 bytes making an int apparently, even though the maximum possible value this function could be before the cast is 12
+                //Roll the dice  //TODO REVIEW THIS AFTER CHANGING EVERY byte TO INT
                 diceRoll =  ((int)(Math.random() * 5 + 1)+(int)(Math.random() * 5 + 1));
-                for (int i = 0; i<100; i++)
-                {
-                    System.out.print((Math.round(Math.random()*5 + 1) + Math.round(Math.random()*5+1)) + " ");
-                    if(i%10 == 0) System.out.println();
-                }
                 //Give out resources
                 for (Hex h : HM.Hexes) {
                     if (h.getDiceNo() == diceRoll) {                         //Found a hex with the matching # token
@@ -283,6 +290,7 @@ public class CatanGameScreen extends GameScreen {
             //Update relevant map elements
             switch(buildMode){
                 case 1:
+                case 2:
                     for (Node n:BM.nodes) {
                         n.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
                     }

@@ -29,7 +29,7 @@ public class Hex extends ClickableObject{
 
     //CONSTRUCTOR - Uses node0-node5 for the time being as i just want to hardcode the nodes to each hex atm, ill clean this up later
     //TODO clean this up later
-    Hex(int res, int dice, int node0, int node1, int node2, int node3, int node4, int node5, GameScreen gameScreen){
+    public Hex(int res, int dice, int node0, int node1, int node2, int node3, int node4, int node5, GameScreen gameScreen){
         super(0, 0, 174f, 200f, null, gameScreen);
         this.resource = res;
         this.diceNo = dice;

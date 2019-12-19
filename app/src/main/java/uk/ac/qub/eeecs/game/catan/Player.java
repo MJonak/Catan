@@ -3,13 +3,30 @@ package uk.ac.qub.eeecs.game.catan;
 public class Player {
     private final int playerNo;
     private int victoryPoints;
-    private byte[] resources = new byte[]{4, 2, 0, 2, 4}; //0 is brick, 1 is wool, 2 is ore, 3 is  grain, 4 is wood || Starting off with this array to allow players to build initial settlements & roads
+    private int[] resources = new int[]{0, 0, 0, 0, 0}; //0 is brick, 1 is wool, 2 is ore, 3 is  grain, 4 is wood
     //Dev cards
     //trading
+
     public Player(int playerNumber){
         this.playerNo = playerNumber;
         victoryPoints = 0;
+    }
 
+    /**
+     * Return player number
+     * @return This player's player number
+     */
+    public int getPlayerNo(){return this.playerNo;}
+
+    /**
+     * Sets the Player's resource array values to allow them to build 2 settlements & 2 roads at the start of the game.
+     */
+    public void setStartingResources(){
+        resources[0] = 4;
+        resources[1] = 2;
+        resources[2] = 0;
+        resources[3] = 2;
+        resources[4] = 4;
     }
 
     /**
@@ -26,10 +43,28 @@ public class Player {
      */
     public void removeResource(int resourceNo, int quantity){this.resources[resourceNo] -= quantity;}
 
+    /**
+     * Counts the player's total number of resource cards. If a 7 is rolled and this player's resource card total exceeds 7 they must discard half of their cards (rounded down).
+     * @return This player's total number of resources
+     */
+    public int getNoOfResources(){
+        int sum = 0;
+        for (int resource : resources) {
+            sum += resource;
+        }
+        return sum;
+    }
+
+    /**
+     * Returns the amount of the specified resource that the player has.
+     * @param resourceNo Corresponding Resource number: 0 is brick, 1 is wool, 2 is ore, 3 is  grain, 4 is wood
+     * @return the amount of resource the player has
+     */
+    public int getResource(int resourceNo){return this.resources[resourceNo];}
 
     /**int
      * Checks if the player has sufficient resources to build a building of the specified type
-     * @param buildingType number corresponding to the building to be built, 1 is a settlement, 2 is a city, 3 is a road
+     * @param buildingType number corresponding to the building to be built, 1 is a settlement, 2 is a town, 3 is a road
      * @return true if the player has enough resources to build the specified building, false otherwise
      */
     public boolean hasEnoughResourcesFor(int buildingType){
@@ -64,6 +99,7 @@ public class Player {
                 break;
         }
     }
+
     /**
      * Add victory points to the players running total. Call this method when the player should be awarded victory points
      * @param quantity Number of victory points to be awarded
@@ -71,34 +107,11 @@ public class Player {
     public void addVictoryPoints(int quantity){this.victoryPoints += quantity;}
 
     /**
-     * Return player number
-     * @return This player's player number
-     */
-    public int getPlayerNo(){return this.playerNo;}
-
-    /**
      * Returns the player's current victory point total
      * @return This player's victory point total
      */
     public int getVictoryPoints(){return this.victoryPoints;}
 
-    /**
-     * Counts the player's total number of resource cards. If a 7 is rolled and this player's resource card total exceeds 7 they must discard half of their cards (rounded down).
-     * @return This player's total number of resources
-     */
-    public int getNoOfResources(){
-        int sum = 0;
-        for (byte resource : resources) {
-            sum += resource;
-        }
-        return sum;
-    }
 
-    /**
-     * Returns the amount of the specified resource that the player has.
-     * @param resourceNo Corresponding Resource number: 0 is brick, 1 is wool, 2 is ore, 3 is  grain, 4 is wood
-     * @return the amount of resource the player has
-     */
-    public int getResource(int resourceNo){return this.resources[resourceNo];}
 
 }
