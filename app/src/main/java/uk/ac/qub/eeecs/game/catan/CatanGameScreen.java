@@ -142,7 +142,6 @@ public class CatanGameScreen extends GameScreen {
     //Method used to allow the node&road classes to access the current player number when a touch event occurs
     public static Player getCurrentPlayer(){return PlayerList[currentPlayer];}
 
-
     private void endTurn(){
         //Next player
         currentPlayer++;
@@ -160,151 +159,149 @@ public class CatanGameScreen extends GameScreen {
      */
     @Override
     public void update(ElapsedTime elapsedTime) {
-
         if(turnNo>2) {
- //Normal Turn Cycle
-            //Update the correct buttons & implement functionality
-            switch (UIMode) {
-                case 0://Update the default UI
-                    for (PushButton pushButton1 : defaultUI) {
-                        pushButton1.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
-                    }
-                    if (btnBuild.isPushTriggered()) {
-                        //Open build UI
-                        UIMode = 1;
-                        buildMode = 0;
-                    }
-                    break;
-                case 1://Update the buildUI
-                    for (PushButton pushButton : buildUI) {
-                        pushButton.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
-                    }
-                    //Implement button functionality
-                    if (btnSettlement.isPushTriggered()) {
-                        if (PlayerList[currentPlayer].hasEnoughResourcesFor( 1))
-                            buildMode = 1;
-                        else System.out.println("Not enough resources!");
-                    }
-                    if (btnRoad.isPushTriggered()) {
-                        if (PlayerList[currentPlayer].hasEnoughResourcesFor( 3)) {
-                            buildMode = 3;
-                        } else {
-                            System.out.println("Not enough resources!");
-                        }
-                    }
-                    if(btnTown.isPushTriggered()){
-                        if (PlayerList[currentPlayer].hasEnoughResourcesFor( 2)) {
-                            buildMode = 2;
-                        } else {
-                            System.out.println("Not enough resources!");
-                        }
-                    }
-                    if (btnBack.isPushTriggered()) {
-                        UIMode = 0;
-                    }
-                    //Update the clickable map elements for building
-                    //TODO probably best to have a separate UI mode for actually building where the only visible button is btnBack
-                    switch (buildMode) {
-                        case 1: //Settlement
-                            for (Node node : BM.nodes) {
-                                node.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
-                            }
-                            break;
-                        case 2: //City
-                            for (Node node : BM.nodes) {
-                                node.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
-                            }
-                            break;
-                        case 3: //Road
-                            for (Road road : BM.roads) {
-                                road.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
-                            }
-                            break;
-                    }
-                    break;
-            }
-            //If the dice have already been rolled, update the "End Turn" button, else update the "Roll Dice" button
-            if (diceRolledThisTurn) {
-                btnEndTurn.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
-            } else {
-                btnRoll.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
-            }
+            postGameSetupTurn(elapsedTime);
+        } else {
+            preGameSetupTurn(elapsedTime);
+        }
+    }
 
-            //Rolling dice
-            if (btnRoll.isPushTriggered()) {
-                //Roll the dice  //TODO REVIEW THIS AFTER CHANGING EVERY byte TO INT
-                diceRoll =  ((int)(Math.random() * 5 + 1)+(int)(Math.random() * 5 + 1));
-                //Give out resources
-                for (Hex h : HM.Hexes) {
-                    if (h.getDiceNo() == diceRoll) {                         //Found a hex with the matching # token
-                        for (int i = 0; i < 6; i++) {                      //Iterate through the nodes
-                            if (BM.nodes[h.getNode(i)].getBuildState() != 0) {  //Found a node on this hex which has a building
-                                // Give the Player who owns the building the resource(s)
-                                PlayerList[BM.nodes[h.getNode(i)].getPlayer()].addResource(h.getResource(), BM.nodes[h.getNode(i)].getBuildState());
-                            }
-                        }
-                    }
+    private void preGameSetupTurn(ElapsedTime elapsedTime) {
+        switch(UIMode){
+            case 11:        //Road button -> Place road
+                btnRoad.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+                if(btnRoad.isPushTriggered()){
+                    buildMode = 3;
                 }
-                diceRolledThisTurn = true;
-                System.out.println(diceRoll);
-            }
-
-            //Ending turn
-            if (btnEndTurn.isPushTriggered()) {
-                //End the turn
-                diceRolledThisTurn = false;
-                UIMode = 0;
-                endTurn();
-
-                System.out.println("Plyr#: " + currentPlayer + "|" + PlayerList[currentPlayer].getResource( 0) + "-Brick " + PlayerList[currentPlayer].getResource( 1) + "-Wool " + PlayerList[currentPlayer].getResource( 2) + "-Ore " + PlayerList[currentPlayer].getResource( 3) + "-Grain " + PlayerList[currentPlayer].getResource( 4) + "-Wood" + "|| VP:" + PlayerList[currentPlayer].getVictoryPoints());
-            }
-/*Setup*/} else {
-            switch(UIMode){
-                case 11:        //Road button -> Place road
-                    btnRoad.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
-                    if(btnRoad.isPushTriggered()){
-                        buildMode = 3;
-                    }
-                    break;
-                case 12:        //End Turn -> settlement button
-                    btnEndTurn.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
-                    if(btnEndTurn.isPushTriggered()){
-                        buildMode = 1;
-                        if(turnNo==2 && currentPlayer==NoOfPlayers-1){
-                            UIMode = 0;
-                            for (Hex h: HM.Hexes) {
-                                for (int n = 0; n < 6; n++) {
-                                    if(BM.nodes[h.getNode(n)].getBuildState()==1){
-                                        PlayerList[BM.nodes[h.getNode(n)].getPlayer()].addResource(h.getResource(), 1);
-                                    }
+                break;
+            case 12:        //End Turn -> settlement button
+                btnEndTurn.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+                if(btnEndTurn.isPushTriggered()){
+                    buildMode = 1;
+                    if(turnNo==2 && currentPlayer==NoOfPlayers-1){
+                        UIMode = 0;
+                        for (Hex h: HM.Hexes) {
+                            for (int n = 0; n < 6; n++) {
+                                if(BM.nodes[h.getNode(n)].getBuildState()==1){
+                                    PlayerList[BM.nodes[h.getNode(n)].getPlayer()].addResource(h.getResource(), 1);
                                 }
                             }
-                        }else{
-                            UIMode = 10;
                         }
-                        endTurn();
+                    }else{
+                        UIMode = 10;
                     }
-                    break;
-            }
-
-            //Update relevant map elements
-            switch(buildMode){
-                case 1:
-                case 2:
-                    for (Node n:BM.nodes) {
-                        n.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
-                    }
-                    break;
-                case 3:
-                    for (Road r:BM.roads) {
-                        r.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
-                    }
-                    break;
-            }
-
+                    endTurn();
+                }
+                break;
         }
 
+        //Update relevant map elements
+        updateMapElements(elapsedTime);
     }
+
+    private void updateMapElements(ElapsedTime elapsedTime) {
+        //TODO probably best to have a separate UI mode for actually building where the only visible button is btnBack
+        switch(buildMode){
+            case 1:
+            case 2:
+                for (Node n:BM.nodes) {
+                    n.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+                }
+                break;
+            case 3:
+                for (Road r:BM.roads) {
+                    r.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+                }
+                break;
+        }
+    }
+
+    private void postGameSetupTurn(ElapsedTime elapsedTime){
+        updateImplementButtons(elapsedTime);
+        //If the dice have already been rolled, update the "End Turn" button, else update the "Roll Dice" button
+        if (diceRolledThisTurn) {
+            btnEndTurn.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+        } else {
+            btnRoll.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+        }
+
+        //Rolling dice
+        if (btnRoll.isPushTriggered()) {
+            //Roll the dice  //TODO REVIEW THIS AFTER CHANGING EVERY byte TO INT
+            diceRoll =  ((int)(Math.random() * 5 + 1)+(int)(Math.random() * 5 + 1));
+            giveOutResources();
+            diceRolledThisTurn = true;
+            System.out.println(diceRoll);
+        }
+
+        //Ending turn
+        if (btnEndTurn.isPushTriggered()) {
+            //End the turn
+            diceRolledThisTurn = false;
+            UIMode = 0;
+            endTurn();
+            System.out.println("Plyr#: " + currentPlayer + "|" + PlayerList[currentPlayer].getResource( 0) + "-Brick " + PlayerList[currentPlayer].getResource( 1) + "-Wool " + PlayerList[currentPlayer].getResource( 2) + "-Ore " + PlayerList[currentPlayer].getResource( 3) + "-Grain " + PlayerList[currentPlayer].getResource( 4) + "-Wood" + "|| VP:" + PlayerList[currentPlayer].getVictoryPoints());
+        }
+    }
+
+    private void giveOutResources() {
+        for (Hex h : HM.Hexes) {
+            if (h.getDiceNo() == diceRoll) {                         //Found a hex with the matching # token
+                for (int i = 0; i < 6; i++) {                      //Iterate through the nodes
+                    if (BM.nodes[h.getNode(i)].getBuildState() != 0) {  //Found a node on this hex which has a building
+                        // Give the Player who owns the building the resource(s)
+                        PlayerList[BM.nodes[h.getNode(i)].getPlayer()].addResource(h.getResource(), BM.nodes[h.getNode(i)].getBuildState());
+                    }
+                }
+            }
+        }
+    }
+
+    private void updateImplementButtons(ElapsedTime elapsedTime) {
+        switch (UIMode) {
+            case 0://Update the default UI
+                for (PushButton pushButton1 : defaultUI) {
+                    pushButton1.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+                }
+                if (btnBuild.isPushTriggered()) {
+                    //Open build UI
+                    UIMode = 1;
+                    buildMode = 0;
+                }
+                break;
+            case 1://Update the buildUI
+                for (PushButton pushButton : buildUI) {
+                    pushButton.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+                }
+                //Implement button functionality
+                if (btnSettlement.isPushTriggered()) {
+                    if (PlayerList[currentPlayer].hasEnoughResourcesFor( 1))
+                        buildMode = 1;
+                    else System.out.println("Not enough resources!");
+                }
+                if (btnRoad.isPushTriggered()) {
+                    if (PlayerList[currentPlayer].hasEnoughResourcesFor( 3)) {
+                        buildMode = 3;
+                    } else {
+                        System.out.println("Not enough resources!");
+                    }
+                }
+                if(btnTown.isPushTriggered()){
+                    if (PlayerList[currentPlayer].hasEnoughResourcesFor( 2)) {
+                        buildMode = 2;
+                    } else {
+                        System.out.println("Not enough resources!");
+                    }
+                }
+                if (btnBack.isPushTriggered()) {
+                    UIMode = 0;
+                }
+                
+                updateMapElements(elapsedTime);
+                break;
+        }
+    }
+
 
     Paint paint = new Paint();
 
