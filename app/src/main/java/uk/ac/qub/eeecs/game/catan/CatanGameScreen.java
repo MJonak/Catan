@@ -20,13 +20,22 @@ import uk.ac.qub.eeecs.game.catan.World.Road;
 
 public class CatanGameScreen extends GameScreen {
 
+    //TODO This screen should only be responsible for displaying the game, create a separate class to do the actual heavy lifting of the game
     //Game properties
     private int diceRoll;
     private boolean diceRolledThisTurn;
     public static short turnNo;
     private static int currentPlayer;
     public static int UIMode = 0; //0 - default view; 1 - buildUI; //TODO made the UIMode static to allow resetting the ui back to default after a touch event occurs on a node/road, could change back if better option is found
-    private static int buildMode; //buildMode 0 - nothing; 1 - settlement ; 2 - city ; 3 - road  //TODO Buildmode may need to be reworked, only need to know whether to update roads or nodes
+    public final int UI_DEFAULT = 0;
+    public final int UI_BUILD = 1;
+    public final int UI_SETUP_SETTLEMENT = -1;
+    public final int UI_SETUP_ROAD = -2;
+    private static int buildMode; //buildMode 0 - nothing; 1 - settlement ; 2 - city ; 3 - road  //TODO Buildmode may need to be reworked, only need to know whether to update roads or node
+    public final int BUILD_MODE_OFF = 0;
+    public final int BUILD_MODE_SETTLEMENT = 1;
+    public final int BUILD_MODE_CITY = 2;
+    public final int BUILD_MODE_ROAD = 3;
     private static int NoOfPlayers = 2;
     private static Player[] PlayerList = new Player[NoOfPlayers];
     //Board Elements
@@ -49,7 +58,7 @@ public class CatanGameScreen extends GameScreen {
     public CatanGameScreen(Game game) {
         super("CatanGameScreen", game);
 
-        //Game constructor
+        //Game constructor  //TODO This really needs to be a json
         mGame.getAssetManager().loadAndAddBitmap("TempHex", "img/catan/HexPH.png");
         mGame.getAssetManager().loadAndAddBitmap("HexWood", "img/catan/HexPHWood.png");
         mGame.getAssetManager().loadAndAddBitmap("HexBrick", "img/catan/HexPHBrick.png");
@@ -166,18 +175,20 @@ public class CatanGameScreen extends GameScreen {
         }
     }
 
+    //TODO Recursive method (call itself at the end of turn one, then call a normal game turn method which calls itself recursively over and over til the end of the game?)
+    //      probably not ideal as we'd end up with a weird ladder of methods by turn like 50
     private void preGameSetupTurn(ElapsedTime elapsedTime) {
         switch(UIMode){
             case 11:        //Road button -> Place road
                 btnRoad.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
                 if(btnRoad.isPushTriggered()){
-                    buildMode = 3;
+                    buildMode = BUILD_MODE_ROAD;
                 }
                 break;
             case 12:        //End Turn -> settlement button
                 btnEndTurn.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
                 if(btnEndTurn.isPushTriggered()){
-                    buildMode = 1;
+                    buildMode = BUILD_MODE_SETTLEMENT;
                     if(turnNo==2 && currentPlayer==NoOfPlayers-1){
                         UIMode = 0;
                         for (Hex h: HM.Hexes) {
@@ -200,19 +211,15 @@ public class CatanGameScreen extends GameScreen {
     }
 
     private void updateMapElements(ElapsedTime elapsedTime) {
-        //TODO probably best to have a separate UI mode for actually building where the only visible button is btnBack
-        switch(buildMode){
-            case 1:
-            case 2:
-                for (Node n:BM.nodes) {
-                    n.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
-                }
-                break;
-            case 3:
-                for (Road r:BM.roads) {
-                    r.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
-                }
-                break;
+        if(buildMode == BUILD_MODE_SETTLEMENT || buildMode == BUILD_MODE_CITY) {
+            for (Node n:BM.nodes) {
+                n.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+            }
+        }
+        if(buildMode == BUILD_MODE_ROAD){
+            for (Road r:BM.roads) {
+                r.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
+            }
         }
     }
 
@@ -257,6 +264,7 @@ public class CatanGameScreen extends GameScreen {
         }
     }
 
+    //TODO This method literally states that it does 2 things
     private void updateImplementButtons(ElapsedTime elapsedTime) {
         switch (UIMode) {
             case 0://Update the default UI

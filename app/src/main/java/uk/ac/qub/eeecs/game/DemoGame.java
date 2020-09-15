@@ -61,9 +61,7 @@ public class DemoGame extends Game {
             mAudioManager.stopMusic();
 
         // Go back to the menu screen
-        getScreenManager().removeAllScreens();
-        MenuScreen menuScreen = new MenuScreen(this);
-        getScreenManager().addScreen(menuScreen);
+
         return true;
     }
 }

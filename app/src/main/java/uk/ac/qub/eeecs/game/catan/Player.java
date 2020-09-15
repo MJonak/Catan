@@ -3,7 +3,7 @@ package uk.ac.qub.eeecs.game.catan;
 public class Player {
     private final int playerNo;
     private int victoryPoints;
-    private int[] resources = new int[]{0, 0, 0, 0, 0}; //0 is brick, 1 is wool, 2 is ore, 3 is  grain, 4 is wood
+    private int[] resources = new int[]{0, 0, 0, 0, 0}; //0 is brick, 1 is wool, 2 is ore, 3 is  grain, 4 is wood //TODO Use a string indexed array/key value store instead of this
     //Dev cards
     //trading
 
@@ -21,6 +21,7 @@ public class Player {
     /**
      * Sets the Player's resource array values to allow them to build 2 settlements & 2 roads at the start of the game.
      */
+    //TODO This should probably be in the default constructor
     public void setStartingResources(){
         resources[0] = 4;
         resources[1] = 2;

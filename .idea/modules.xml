@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Catan.iml" filepath="$PROJECT_DIR$/Catan.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Catan-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Catan-app.iml" group="Catan/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/StudioProjects-Catan.iml" filepath="$PROJECT_DIR$/.idea/modules/StudioProjects-Catan.iml" group="Catan" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
