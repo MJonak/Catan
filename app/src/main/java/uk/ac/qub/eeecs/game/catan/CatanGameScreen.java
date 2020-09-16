@@ -26,16 +26,20 @@ public class CatanGameScreen extends GameScreen {
     private boolean diceRolledThisTurn;
     public static short turnNo;
     private static int currentPlayer;
+
     public static int UIMode = 0; //0 - default view; 1 - buildUI; //TODO made the UIMode static to allow resetting the ui back to default after a touch event occurs on a node/road, could change back if better option is found
     public final int UI_DEFAULT = 0;
     public final int UI_BUILD = 1;
     public final int UI_SETUP_SETTLEMENT = -1;
     public final int UI_SETUP_ROAD = -2;
+    public final int UI_SETUP_END_TURN = -3;
+
     private static int buildMode; //buildMode 0 - nothing; 1 - settlement ; 2 - city ; 3 - road  //TODO Buildmode may need to be reworked, only need to know whether to update roads or node
     public final int BUILD_MODE_OFF = 0;
     public final int BUILD_MODE_SETTLEMENT = 1;
     public final int BUILD_MODE_CITY = 2;
     public final int BUILD_MODE_ROAD = 3;
+
     private static int NoOfPlayers = 2;
     private static Player[] PlayerList = new Player[NoOfPlayers];
     //Board Elements
@@ -108,8 +112,8 @@ public class CatanGameScreen extends GameScreen {
         currentPlayer = 0;
         turnNo = 1;
         diceRolledThisTurn = false;
-        buildMode = 1;
-        UIMode = 10; //Meaning first stage of setup
+        buildMode = BUILD_MODE_SETTLEMENT;
+        UIMode = UI_SETUP_SETTLEMENT; //Meaning first stage of setup
         for (int i = 0; i<NoOfPlayers;i++){
             PlayerList[i] = new Player(i);
             PlayerList[i].setStartingResources();
@@ -179,18 +183,18 @@ public class CatanGameScreen extends GameScreen {
     //      probably not ideal as we'd end up with a weird ladder of methods by turn like 50
     private void preGameSetupTurn(ElapsedTime elapsedTime) {
         switch(UIMode){
-            case 11:        //Road button -> Place road
+            case UI_SETUP_ROAD:        //Road button -> Place road
                 btnRoad.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
                 if(btnRoad.isPushTriggered()){
                     buildMode = BUILD_MODE_ROAD;
                 }
                 break;
-            case 12:        //End Turn -> settlement button
+            case UI_SETUP_END_TURN:        //End Turn -> settlement button
                 btnEndTurn.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
                 if(btnEndTurn.isPushTriggered()){
                     buildMode = BUILD_MODE_SETTLEMENT;
                     if(turnNo==2 && currentPlayer==NoOfPlayers-1){
-                        UIMode = 0;
+                        UIMode = UI_DEFAULT;
                         for (Hex h: HM.Hexes) {
                             for (int n = 0; n < 6; n++) {
                                 if(BM.nodes[h.getNode(n)].getBuildState()==1){
@@ -199,7 +203,7 @@ public class CatanGameScreen extends GameScreen {
                             }
                         }
                     }else{
-                        UIMode = 10;
+                        UIMode = UI_SETUP_SETTLEMENT;
                     }
                     endTurn();
                 }
@@ -245,7 +249,7 @@ public class CatanGameScreen extends GameScreen {
         if (btnEndTurn.isPushTriggered()) {
             //End the turn
             diceRolledThisTurn = false;
-            UIMode = 0;
+            UIMode = UI_DEFAULT;
             endTurn();
             System.out.println("Plyr#: " + currentPlayer + "|" + PlayerList[currentPlayer].getResource( 0) + "-Brick " + PlayerList[currentPlayer].getResource( 1) + "-Wool " + PlayerList[currentPlayer].getResource( 2) + "-Ore " + PlayerList[currentPlayer].getResource( 3) + "-Grain " + PlayerList[currentPlayer].getResource( 4) + "-Wood" + "|| VP:" + PlayerList[currentPlayer].getVictoryPoints());
         }
@@ -267,14 +271,14 @@ public class CatanGameScreen extends GameScreen {
     //TODO This method literally states that it does 2 things
     private void updateImplementButtons(ElapsedTime elapsedTime) {
         switch (UIMode) {
-            case 0://Update the default UI
+            case UI_DEFAULT://Update the default UI
                 for (PushButton pushButton1 : defaultUI) {
                     pushButton1.update(elapsedTime, mGameLayerViewport, mGameScreenViewport);
                 }
                 if (btnBuild.isPushTriggered()) {
-                    //Open build UI
-                    UIMode = 1;
-                    buildMode = 0;
+                    //Open build UI, turn off build mode to prevent accidental building
+                    UIMode = UI_BUILD;
+                    buildMode = BUILD_MODE_OFF;
                 }
                 break;
             case 1://Update the buildUI
@@ -284,25 +288,25 @@ public class CatanGameScreen extends GameScreen {
                 //Implement button functionality
                 if (btnSettlement.isPushTriggered()) {
                     if (PlayerList[currentPlayer].hasEnoughResourcesFor( 1))
-                        buildMode = 1;
+                        buildMode = BUILD_MODE_SETTLEMENT;
                     else System.out.println("Not enough resources!");
                 }
                 if (btnRoad.isPushTriggered()) {
                     if (PlayerList[currentPlayer].hasEnoughResourcesFor( 3)) {
-                        buildMode = 3;
+                        buildMode = BUILD_MODE_ROAD;
                     } else {
                         System.out.println("Not enough resources!");
                     }
                 }
                 if(btnTown.isPushTriggered()){
                     if (PlayerList[currentPlayer].hasEnoughResourcesFor( 2)) {
-                        buildMode = 2;
+                        buildMode = BUILD_MODE_CITY;
                     } else {
                         System.out.println("Not enough resources!");
                     }
                 }
                 if (btnBack.isPushTriggered()) {
-                    UIMode = 0;
+                    UIMode = UI_DEFAULT;
                 }
                 
                 updateMapElements(elapsedTime);
@@ -344,24 +348,24 @@ public class CatanGameScreen extends GameScreen {
 
         //Draw the UI elements
         switch (UIMode){
-            case 0://Draw the default UI
+            case UI_DEFAULT:
                 for (PushButton pushButton1 : defaultUI) {
                     pushButton1.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
                 }
                 break;
-            case 1://Draw the buildUI
+            case UI_BUILD:
                 for (PushButton pushButton : buildUI) {
                     pushButton.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
                 }
                 break;
                             //SETUP PHASE
-            case 10:
+            case UI_SETUP_SETTLEMENT:
                 btnSettlement.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
                 break;
-            case 11:
+            case UI_SETUP_ROAD:
                 btnRoad.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
                 break;
-            case 12:
+            case UI_SETUP_END_TURN:
                 btnEndTurn.draw(elapsedTime, graphics2D, mGameLayerViewport, mGameScreenViewport);
                 break;
 
